@@ -1,0 +1,25 @@
+<nav class="bg-gray-900 border-b border-gray-700 px-6 py-3">
+  <div class="max-w-6xl mx-auto flex items-center justify-between">
+    <a href="/" class="text-xl font-bold text-white">Co<span class="text-yellow-400">dingo</span></a>
+    <div class="flex items-center gap-2">
+      <a href="/" class="px-3 py-1.5 text-sm text-gray-300 hover:text-white">หน้าหลัก</a>
+      <a href="/search" class="px-3 py-1.5 text-sm text-gray-300 hover:text-white">ค้นหา</a>
+      <% if (user) { %>
+        <a href="/library"     class="px-3 py-1.5 text-sm text-gray-300 hover:text-white">คลัง</a>
+        <a href="/progress"    class="px-3 py-1.5 text-sm text-gray-300 hover:text-white">ความก้าวหน้า</a>
+        <a href="/leaderboard" class="px-3 py-1.5 text-sm text-gray-300 hover:text-white">Leaderboard</a>
+        <% if (user.role === 'admin') { %>
+          <a href="/admin" class="px-3 py-1.5 text-sm bg-purple-600 hover:bg-purple-500 text-white rounded-md">จัดการเนื้อหา</a>
+        <% } %>
+        <a href="/profile" class="px-3 py-1.5 text-sm bg-gray-700 hover:bg-gray-600 text-white rounded-md">
+          👤 <%= user.nickname || user.username %>
+          <span class="text-yellow-400 ml-1 text-xs"><%= user.score %> แต้ม</span>
+        </a>
+        <a href="/logout" class="px-3 py-1.5 text-sm text-gray-400 hover:text-red-400">ออก</a>
+      <% } else { %>
+        <a href="/login"    class="px-3 py-1.5 text-sm text-gray-300 hover:text-white">เข้าสู่ระบบ</a>
+        <a href="/register" class="px-3 py-1.5 text-sm bg-yellow-500 hover:bg-yellow-400 text-black font-semibold rounded-md">สมัครสมาชิก</a>
+      <% } %>
+    </div>
+  </div>
+</nav>

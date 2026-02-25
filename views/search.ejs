@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Codingo — ค้นหาบทเรียน</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <style>* { font-family: 'Sarabun', sans-serif; }</style>
+</head>
+<body class="bg-gray-950 text-gray-100 min-h-screen">
+
+  <%- include('partials/navbar') %>
+
+  <div class="max-w-6xl mx-auto px-6 py-10">
+    <h1 class="text-3xl font-bold mb-2">ค้นหาบทเรียน</h1>
+    <p class="text-gray-400 mb-6">ค้นหาจากชื่อ คำอธิบาย หรือหมวดหมู่</p>
+
+    <!-- ช่องค้นหา -->
+    <form method="GET" action="/search" class="flex gap-3 mb-8">
+      <input type="text" name="q" value="<%= keyword %>" placeholder="พิมพ์คำค้นหา..."
+        class="flex-1 bg-gray-800 border border-gray-600 rounded-lg px-4 py-2.5 text-sm text-white placeholder-gray-500 focus:outline-none focus:border-yellow-400" />
+      <button type="submit" class="bg-yellow-500 hover:bg-yellow-400 text-black font-semibold px-6 py-2.5 rounded-lg text-sm transition">
+        ค้นหา
+      </button>
+    </form>
+
+    <!-- ผลลัพธ์ -->
+    <% if (notFound) { %>
+      <div class="text-center py-20">
+        <p class="text-5xl mb-3">🔍</p>
+        <p class="text-gray-400 text-lg font-semibold">ไม่พบบทเรียน</p>
+        <p class="text-gray-600 text-sm mt-1">ลองใช้คำค้นหาอื่น หรือลองเปลี่ยนหมวดหมู่</p>
+      </div>
+    <% } else if (lessons.length > 0) { %>
+      <p class="text-sm text-gray-500 mb-4">พบ <%= lessons.length %> บทเรียน</p>
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+        <% lessons.forEach((item) => { %>
+          <a href="/lessons/<%= item.id %>" class="block bg-gray-800 border border-gray-700 rounded-xl hover:border-yellow-400 hover:shadow-lg transition-all overflow-hidden">
+            <div class="h-2 w-full"
+              style="background: <%= item.category === 'Python' ? '#3b82f6' : item.category === 'JavaScript' ? '#f59e0b' : item.category === 'Web' ? '#f97316' : item.category === 'Database' ? '#10b981' : item.category === 'DevTools' ? '#8b5cf6' : item.category === 'Backend' ? '#06b6d4' : item.category === 'Computer Science' ? '#ec4899' : '#6b7280' %>">
+            </div>
+            <div class="p-5">
+              <div class="flex items-center justify-between mb-2">
+                <span class="text-xs font-semibold px-2 py-0.5 rounded-full bg-gray-700 text-gray-300"><%= item.category %></span>
+                <span class="text-xs text-gray-500"><%= item.content_count %> เนื้อหา</span>
+              </div>
+              <h2 class="font-bold text-base text-white mb-1"><%= item.title %></h2>
+              <p class="text-sm text-gray-400 line-clamp-2"><%= item.description %></p>
+            </div>
+          </a>
+        <% }); %>
+      </div>
+    <% } %>
+
+  </div>
+</body>
+</html>

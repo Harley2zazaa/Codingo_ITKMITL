@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Codingo — จัดการเนื้อหา</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <style>* { font-family: 'Sarabun', sans-serif; }</style>
+</head>
+<body class="bg-gray-950 text-gray-100 min-h-screen">
+
+  <%- include('partials/navbar') %>
+
+  <div class="max-w-3xl mx-auto px-6 py-10">
+    <a href="/admin" class="text-sm text-gray-400 hover:text-white mb-6 inline-block">← กลับหน้าจัดการเนื้อหา</a>
+
+    <h1 class="text-2xl font-bold mb-1">จัดการเนื้อหา</h1>
+    <p class="text-gray-400 mb-8">บทเรียน: <span class="text-white font-semibold"><%= lesson.title %></span></p>
+
+    <!-- แจ้งเตือน -->
+    <% if (msg === 'added')   { %><div class="bg-green-900/40 border border-green-500 text-green-300 text-sm rounded-lg px-4 py-3 mb-5">✅ เพิ่มเนื้อหาสำเร็จ</div><% } %>
+    <% if (msg === 'deleted') { %><div class="bg-gray-700 border border-gray-500 text-gray-300 text-sm rounded-lg px-4 py-3 mb-5">ลบเนื้อหาสำเร็จ</div><% } %>
+    <% if (msg === 'error')   { %><div class="bg-red-900/40 border border-red-500 text-red-300 text-sm rounded-lg px-4 py-3 mb-5">⚠️ ข้อมูลที่ต้องการยังไม่ครบถ้วน</div><% } %>
+
+    <!-- ฟอร์มเพิ่มเนื้อหา -->
+    <div class="bg-gray-800 border border-gray-700 rounded-2xl p-6 mb-6">
+      <h2 class="font-bold mb-4">เพิ่มเนื้อหาใหม่</h2>
+      <form method="POST" action="/admin/lesson/<%= lesson.id %>/contents/add">
+        <div class="mb-4">
+          <label class="block text-sm text-gray-400 mb-1.5">ชื่อเนื้อหา (บท) <span class="text-red-400">*</span></label>
+          <input type="text" name="title" placeholder="เช่น บทที่ 1 — บทนำ" required
+            class="w-full bg-gray-700 border border-gray-600 rounded-lg px-4 py-2.5 text-sm text-white placeholder-gray-500 focus:outline-none focus:border-yellow-400" />
+        </div>
+        <div class="mb-4">
+          <label class="block text-sm text-gray-400 mb-1.5">เนื้อหา</label>
+          <textarea name="body" rows="4" placeholder="เนื้อหาของบทนี้..."
+            class="w-full bg-gray-700 border border-gray-600 rounded-lg px-4 py-2.5 text-sm text-white placeholder-gray-500 focus:outline-none focus:border-yellow-400 resize-none"></textarea>
+        </div>
+        <div class="mb-5">
+          <label class="block text-sm text-gray-400 mb-1.5">ลำดับ</label>
+          <input type="number" name="order_num" value="<%= contents.length + 1 %>" min="1"
+            class="w-32 bg-gray-700 border border-gray-600 rounded-lg px-4 py-2.5 text-sm text-white focus:outline-none focus:border-yellow-400" />
+        </div>
+        <button type="submit" class="bg-yellow-500 hover:bg-yellow-400 text-black font-semibold px-5 py-2.5 rounded-lg text-sm transition">
+          + เพิ่มเนื้อหา
+        </button>
+      </form>
+    </div>
+
+    <!-- รายการเนื้อหาที่มีอยู่ -->
+    <h2 class="font-bold mb-4">เนื้อหาทั้งหมด (<%= contents.length %> บท)</h2>
+
+    <% if (contents.length === 0) { %>
+      <div class="text-center text-gray-500 py-10">ยังไม่มีเนื้อหา</div>
+    <% } else { %>
+      <div class="flex flex-col gap-3">
+        <% contents.forEach((item, index) => { %>
+          <div class="bg-gray-800 border border-gray-700 rounded-xl p-5">
+            <div class="flex items-start justify-between gap-3">
+              <div class="flex items-start gap-3 flex-1 min-w-0">
+                <span class="w-7 h-7 flex-shrink-0 flex items-center justify-center rounded-full bg-gray-700 text-xs font-bold text-gray-400">
+                  <%= item.order_num %>
+                </span>
+                <div class="min-w-0">
+                  <p class="font-semibold text-sm text-white"><%= item.title %></p>
+                  <p class="text-xs text-gray-400 mt-1 line-clamp-2"><%= item.body || '(ไม่มีเนื้อหา)' %></p>
+                </div>
+              </div>
+              <form method="POST" action="/admin/contents/delete/<%= item.id %>"
+                onsubmit="return confirm('ลบเนื้อหานี้ใช่หรือไม่?')">
+                <button type="submit"
+                  class="text-xs px-3 py-1.5 bg-red-900/40 hover:bg-red-800/50 border border-red-800 rounded-md text-red-400 transition flex-shrink-0">
+                  ลบ
+                </button>
+              </form>
+            </div>
+          </div>
+        <% }); %>
+      </div>
+    <% } %>
+  </div>
+</body>
+</html>

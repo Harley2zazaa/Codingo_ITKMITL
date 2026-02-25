@@ -1,3 +1,0 @@
-เก็บพวก Dynamic Resource ที่นี่
-
-Ex .ejs

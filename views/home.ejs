@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Codingo — หน้าหลัก</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <style>* { font-family: 'Sarabun', sans-serif; }</style>
+</head>
+<body class="bg-gray-950 text-gray-100 min-h-screen">
+
+  <%- include('partials/navbar') %>
+
+  <div class="max-w-6xl mx-auto px-6 py-10">
+
+    <!-- หัวข้อ -->
+    <div class="mb-8">
+      <% if (user) { %>
+        <h1 class="text-3xl font-bold mb-1">สวัสดี, <%= user.nickname || user.username %> 👋</h1>
+        <p class="text-gray-400">พร้อมเรียนรู้สิ่งใหม่วันนี้แล้วหรือยัง?</p>
+      <% } else { %>
+        <h1 class="text-3xl font-bold mb-1">บทเรียนทั้งหมด</h1>
+        <p class="text-gray-400">สำรวจเนื้อหาและเริ่มต้นการเรียนรู้</p>
+      <% } %>
+    </div>
+
+    <!-- กริดบทเรียน -->
+    <% if (lessons.length === 0) { %>
+      <p class="text-gray-400 text-center py-20">ยังไม่มีบทเรียนในระบบ</p>
+    <% } else { %>
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+        <% lessons.forEach((item) => { %>
+          <a href="/lessons/<%= item.id %>" class="block bg-gray-800 border border-gray-700 rounded-xl hover:border-yellow-400 hover:shadow-lg transition-all overflow-hidden">
+            <!-- สีปก -->
+            <div class="h-2 w-full"
+              style="background: <%= item.category === 'Python' ? '#3b82f6' : item.category === 'JavaScript' ? '#f59e0b' : item.category === 'Web' ? '#f97316' : item.category === 'Database' ? '#10b981' : item.category === 'DevTools' ? '#8b5cf6' : item.category === 'Backend' ? '#06b6d4' : item.category === 'Computer Science' ? '#ec4899' : '#6b7280' %>">
+            </div>
+            <div class="p-5">
+              <div class="flex items-center justify-between mb-2">
+                <span class="text-xs font-semibold px-2 py-0.5 rounded-full bg-gray-700 text-gray-300">
+                  <%= item.category %>
+                </span>
+                <span class="text-xs text-gray-500"><%= item.content_count %> หัวข้อ</span>
+              </div>
+              <h2 class="font-bold text-base text-white mb-1"><%= item.title %></h2>
+              <p class="text-sm text-gray-400 line-clamp-2"><%= item.description %></p>
+            </div>
+          </a>
+        <% }); %>
+      </div>
+    <% } %>
+
+  </div>
+</body>
+</html>

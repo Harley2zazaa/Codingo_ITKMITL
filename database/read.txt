@@ -1,3 +1,0 @@
-put your sqlite Database in here
-
-# หากมีการจัดเก็บที่เปลี่ยนแปลงจะบอกอีกที

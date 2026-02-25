@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Codingo — <%= lesson ? 'แก้ไขบทเรียน' : 'เพิ่มบทเรียน' %></title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <style>* { font-family: 'Sarabun', sans-serif; }</style>
+</head>
+<body class="bg-gray-950 text-gray-100 min-h-screen">
+
+  <%- include('partials/navbar') %>
+
+  <div class="max-w-2xl mx-auto px-6 py-10">
+    <a href="/admin" class="text-sm text-gray-400 hover:text-white mb-6 inline-block">← กลับหน้าจัดการเนื้อหา</a>
+
+    <h1 class="text-3xl font-bold mb-8">
+      <%= lesson ? 'แก้ไขบทเรียน' : 'เพิ่มบทเรียนใหม่' %>
+    </h1>
+
+    <div class="bg-gray-800 border border-gray-700 rounded-2xl p-7">
+
+      <% if (error) { %>
+        <div class="bg-red-900/40 border border-red-500 text-red-300 text-sm rounded-lg px-4 py-3 mb-5">
+          <%= error %>
+        </div>
+      <% } %>
+
+      <form method="POST" action="<%= lesson ? '/admin/edit/' + lesson.id : '/admin/add' %>">
+        <div class="mb-5">
+          <label class="block text-sm text-gray-400 mb-1.5">ชื่อบทเรียน <span class="text-red-400">*</span></label>
+          <input type="text" name="title" value="<%= lesson ? lesson.title : '' %>"
+            placeholder="เช่น พีชคณิตเบื้องต้น" required
+            class="w-full bg-gray-700 border border-gray-600 rounded-lg px-4 py-2.5 text-sm text-white placeholder-gray-500 focus:outline-none focus:border-yellow-400" />
+        </div>
+
+        <div class="mb-5">
+          <label class="block text-sm text-gray-400 mb-1.5">คำอธิบาย <span class="text-red-400">*</span></label>
+          <textarea name="description" rows="3" placeholder="อธิบายเนื้อหาของบทเรียนนี้" required
+            class="w-full bg-gray-700 border border-gray-600 rounded-lg px-4 py-2.5 text-sm text-white placeholder-gray-500 focus:outline-none focus:border-yellow-400 resize-none"><%= lesson ? lesson.description : '' %></textarea>
+        </div>
+
+        <div class="mb-7">
+          <label class="block text-sm text-gray-400 mb-1.5">หมวดหมู่</label>
+          <select name="category"
+            class="w-full bg-gray-700 border border-gray-600 rounded-lg px-4 py-2.5 text-sm text-white focus:outline-none focus:border-yellow-400">
+            <option value="Python">Python</option>
+            <option value="JavaScript">JavaScript</option>
+            <option value="C++">C++</option>
+            <!-- <% ['Python','JavaScript','Web','Database','DevTools','Backend','Computer Science','ทั่วไป'].forEach(cat => { %>
+              <option value="<%= cat %>" <%= lesson && lesson.category === cat ? 'selected' : '' %>><%= cat %></option>
+            <% }); %> -->
+          </select>
+        </div>
+
+        <div class="flex gap-3">
+          <button type="submit"
+            class="bg-yellow-500 hover:bg-yellow-400 text-black font-semibold px-6 py-2.5 rounded-lg text-sm transition">
+            <%= lesson ? 'บันทึกการแก้ไข' : 'เพิ่มบทเรียน' %>
+          </button>
+          <a href="/admin" class="px-6 py-2.5 text-sm text-gray-400 hover:text-white border border-gray-600 rounded-lg transition">
+            ยกเลิก
+          </a>
+        </div>
+      </form>
+    </div>
+  </div>
+</body>
+</html>
