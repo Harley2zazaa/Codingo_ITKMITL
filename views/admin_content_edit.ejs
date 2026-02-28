@@ -7,14 +7,14 @@
 <body class="bg-white pt-16">
     <%- include('partials/navbar') %>
     <div class="max-w-3xl mx-auto px-6 py-10 min-h-screen">
-        <a href="/admin/course/<%= content.course_id %>/contents" class="text-sm text-gray-500 mb-6 inline-block">← กลับหน้าจัดการเนื้อหา</a>
+        <a href="/admin/edit/course/<%= content.course_id %>/content" class="text-sm text-gray-500 mb-6 inline-block">← กลับหน้าจัดการเนื้อหา</a>
         <h1 class="text-2xl font-bold mb-1">แก้ไขเนื้อหา</h1>
         <p class="text-gray-500 mb-8">บทเรียน: <span class="text-black font-semibold"><%= course.title %></span></p>
         <% if (error) { %>
-            <div class="bg-red-900/40 border border-red-500 text-red-300 text-sm rounded-lg px-4 py-3 mb-5"><%= error %></div>
+        <div class="bg-red-900/40 border border-red-500 text-red-300 text-sm rounded-lg px-4 py-3 mb-5"><%= error %></div>
         <% } %>
         <div class="bg-white border rounded-2xl p-6 mb-6">
-            <form method="POST" action="/admin/contents/edit/<%= content.id %>">
+            <form action="/admin/edit/course/<%= content.course_id %>/content/<%= content.id %>" method="POST">
                 <div class="mb-4">
                     <label class="block text-sm text-gray-500 mb-1.5">ชื่อเนื้อหา (บท) <span class="text-red-400">*</span></label>
                     <input type="text" name="title" value="<%= content.title %>" required class="w-full bg-white border rounded-lg px-4 py-2.5 text-sm text-black placeholder-gray-500 focus:outline-none" />
@@ -60,7 +60,7 @@
                 </div>
                 <div class="flex items-center gap-3">
                     <button type="submit" class="bg-blue-500 text-white px-5 py-2.5 rounded-lg text-sm">บันทึกการแก้ไข</button>
-                    <a href="/admin/course/<%= content.course_id %>/contents" class="text-sm text-gray-500 px-5 py-2.5 rounded-lg border">ยกเลิก</a>
+                    <a href="/admin/edit/course/<%= content.course_id %>/content" class="text-sm text-gray-500 px-5 py-2.5 rounded-lg border">ยกเลิก</a>
                 </div>
             </form>
         </div>

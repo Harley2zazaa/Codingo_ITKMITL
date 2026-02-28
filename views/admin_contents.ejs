@@ -16,7 +16,7 @@
         <% if (msg == 'error')   { %><div class="bg-red-900/40 border border-red-500 text-red-500 text-sm rounded-lg px-4 py-3 mb-5">ข้อมูลที่ต้องการยังไม่ครบถ้วน</div><% } %>
         <div class="bg-white border rounded-2xl p-6 mb-6">
             <h2 class="font-bold mb-4">เพิ่มเนื้อหาใหม่</h2>
-            <form method="POST" action="/admin/course/<%= course.id %>/contents/add">
+            <form action="/admin/add/course/<%= course.id %>/content" method="POST">
                 <div class="mb-4">
                     <label class="block text-sm text-gray-500 mb-1.5">ชื่อเนื้อหา (บท) <span class="text-red-400">*</span></label>
                     <input type="text" name="title" placeholder="เช่น บทที่ 1 — บทนำ" required class="w-full bg-white border rounded-lg px-4 py-2.5 text-sm text-black placeholder-gray-500 focus:outline-none" />
@@ -86,8 +86,8 @@
                                 </div>
                             </div>
                             <div class="flex items-center gap-2 flex-shrink-0">
-                                <a href="/admin/contents/edit/<%= item.id %>" class="text-xs px-3 py-1.5 bg-blue-50 border border-blue-200 rounded-md text-blue-600">แก้ไข</a>
-                                <form action="/admin/contents/delete/<%= item.id %>" method="POST" onsubmit="return confirm('ลบเนื้อหานี้ใช่หรือไม่?')">
+                                <a href="/admin/edit/course/<%= item.course_id %>/content/<%= item.id %>" class="text-xs px-3 py-1.5 bg-blue-50 border border-blue-200 rounded-md text-blue-600">แก้ไข</a>
+                                <form action="/admin/delete/course/<%= item.course_id %>/content/<%= item.id %>" method="POST" onsubmit="return confirm('ลบเนื้อหานี้ใช่หรือไม่?')">
                                     <button type="submit" class="text-xs px-3 py-1.5 bg-red-900 border border-red-800 rounded-md text-red-400">ลบ</button>
                                 </form>
                             </div>
