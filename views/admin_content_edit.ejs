@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <%- include('partials/head') %>
+    <title>แก้ไขเนื้อหา - Codingo</title>
+</head>
+<body class="bg-white pt-16">
+    <%- include('partials/navbar') %>
+    <div class="max-w-3xl mx-auto px-6 py-10 min-h-screen">
+        <a href="/admin/course/<%= content.course_id %>/contents" class="text-sm text-gray-500 mb-6 inline-block">← กลับหน้าจัดการเนื้อหา</a>
+        <h1 class="text-2xl font-bold mb-1">แก้ไขเนื้อหา</h1>
+        <p class="text-gray-500 mb-8">บทเรียน: <span class="text-black font-semibold"><%= course.title %></span></p>
+        <% if (error) { %>
+            <div class="bg-red-900/40 border border-red-500 text-red-300 text-sm rounded-lg px-4 py-3 mb-5"><%= error %></div>
+        <% } %>
+        <div class="bg-white border rounded-2xl p-6 mb-6">
+            <form method="POST" action="/admin/contents/edit/<%= content.id %>">
+                <div class="mb-4">
+                    <label class="block text-sm text-gray-500 mb-1.5">ชื่อเนื้อหา (บท) <span class="text-red-400">*</span></label>
+                    <input type="text" name="title" value="<%= content.title %>" required class="w-full bg-white border rounded-lg px-4 py-2.5 text-sm text-black placeholder-gray-500 focus:outline-none" />
+                </div>
+                <div class="mb-4">
+                    <label class="block text-sm text-gray-500 mb-1.5">เนื้อหา</label>
+                    <textarea name="body" rows="6" placeholder="เนื้อหาของบทนี้..." class="w-full bg-white border rounded-lg px-4 py-2.5 text-sm text-black placeholder-gray-500 focus:outline-none resize-none"><%= content.body || '' %></textarea>
+                </div>
+                <div class="border-t pt-4 mt-2 mb-4">
+                    <p class="text-sm font-semibold text-gray-700 mb-3">แบบทดสอบ (ตัวเลือก)</p>
+                    <div class="mb-3">
+                        <label class="block text-sm text-gray-500 mb-1.5">คำถาม</label>
+                        <input type="text" name="Questions" value="<%= content.Questions || '' %>" placeholder="คำถามแบบทดสอบ..." class="w-full bg-white border rounded-lg px-4 py-2.5 text-sm text-black placeholder-gray-500 focus:outline-none" />
+                    </div>
+                    <div class="grid grid-cols-2 gap-3 mb-3">
+                        <div>
+                            <label class="block text-sm text-gray-500 mb-1.5">ตัวเลือก A</label>
+                            <input type="text" name="A" value="<%= content.A || '' %>" placeholder="ตัวเลือก A" class="w-full bg-white border rounded-lg px-4 py-2.5 text-sm text-black placeholder-gray-500 focus:outline-none" />
+                        </div>
+                        <div>
+                            <label class="block text-sm text-gray-500 mb-1.5">ตัวเลือก B</label>
+                            <input type="text" name="B" value="<%= content.B || '' %>" placeholder="ตัวเลือก B" class="w-full bg-white border rounded-lg px-4 py-2.5 text-sm text-black placeholder-gray-500 focus:outline-none" />
+                        </div>
+                        <div>
+                            <label class="block text-sm text-gray-500 mb-1.5">ตัวเลือก C</label>
+                            <input type="text" name="C" value="<%= content.C || '' %>" placeholder="ตัวเลือก C" class="w-full bg-white border rounded-lg px-4 py-2.5 text-sm text-black placeholder-gray-500 focus:outline-none" />
+                        </div>
+                        <div>
+                            <label class="block text-sm text-gray-500 mb-1.5">ตัวเลือก D</label>
+                            <input type="text" name="D" value="<%= content.D || '' %>" placeholder="ตัวเลือก D" class="w-full bg-white border rounded-lg px-4 py-2.5 text-sm text-black placeholder-gray-500 focus:outline-none" />
+                        </div>
+                    </div>
+                    <div>
+                        <label class="block text-sm text-gray-500 mb-1.5">เฉลย (A, B, C หรือ D)</label>
+                        <select name="Answer" class="w-32 bg-white border rounded-lg px-4 py-2.5 text-sm text-black focus:outline-none">
+                            <option value="">-- ไม่ระบุ --</option>
+                            <option value="A" <%= content.Answer == 'A' ? 'selected' : '' %>>A</option>
+                            <option value="B" <%= content.Answer == 'B' ? 'selected' : '' %>>B</option>
+                            <option value="C" <%= content.Answer == 'C' ? 'selected' : '' %>>C</option>
+                            <option value="D" <%= content.Answer == 'D' ? 'selected' : '' %>>D</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="flex items-center gap-3">
+                    <button type="submit" class="bg-blue-500 text-white px-5 py-2.5 rounded-lg text-sm">บันทึกการแก้ไข</button>
+                    <a href="/admin/course/<%= content.course_id %>/contents" class="text-sm text-gray-500 px-5 py-2.5 rounded-lg border">ยกเลิก</a>
+                </div>
+            </form>
+        </div>
+    </div>
+    <%- include('partials/footer') %>
+</body>
+</html>

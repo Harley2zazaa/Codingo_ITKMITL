@@ -319,12 +319,12 @@ app.get("/admin/course/:id/contents", requireAdmin, (req, res) => {
             FROM Course c
             LEFT JOIN Catagory cat ON c.catagory_id = cat.catagory_id
             WHERE c.course_id = ?`, [req.params.id], (err, course) => {
-            if (err || !course) {
-                return res.redirect("/admin");
-            }
-            db.all(`SELECT content_id AS id, course_id, topic AS title, content AS body, Questions, A, B, C, D, Answer
+        if (err || !course) {
+            return res.redirect("/admin");
+        }
+        db.all(`SELECT content_id AS id, course_id, topic AS title, content AS body, Questions, A, B, C, D, Answer
                     FROM Course_Content WHERE course_id = ? ORDER BY content_id`, [req.params.id], (err, rows) => {
-                res.render("admin_contents", { course, contents: rows || [], msg: req.query.msg || null });
+            res.render("admin_contents", { course, contents: rows || [], msg: req.query.msg || null });
         });
     });
 });
@@ -345,6 +345,48 @@ app.post("/admin/contents/delete/:contentId", requireAdmin, (req, res) => {
         db.run("DELETE FROM Course_Content WHERE content_id = ?", [req.params.contentId], () => {
             res.redirect(`/admin/course/${courseId}/contents?msg=deleted`);
         });
+    });
+});
+
+app.get("/admin/contents/edit/:contentId", requireAdmin, (req, res) => {
+    db.get(`SELECT content_id AS id, course_id, topic AS title, content AS body, Questions, A, B, C, D, Answer
+        FROM Course_Content WHERE content_id = ?`, [req.params.contentId], (err, content) => {
+        if (err || !content) {
+            return res.redirect("/admin");
+        }
+
+        db.get("SELECT course_id AS id, title FROM Course WHERE course_id = ?", [content.course_id], (err, course) => {
+            if (err || !course) {
+                return res.redirect("/admin");
+            }
+            res.render("admin_content_edit", { content, course, error: null });
+        });
+    });
+});
+
+app.post("/admin/contents/edit/:contentId", requireAdmin, (req, res) => {
+    const { title, body, Questions, A, B, C, D, Answer } = req.body;
+    db.get("SELECT course_id FROM Course_Content WHERE content_id = ?", [req.params.contentId], (err, row) => {
+        if (err || !row) {
+            return res.redirect("/admin");
+        }
+        const courseId = row.course_id;
+        if (!title) {
+            db.get(`SELECT content_id AS id, course_id, topic AS title, content AS body, Questions, A, B, C, D, Answer
+            FROM Course_Content WHERE content_id = ?`, [req.params.contentId], (err2, content) => {
+                db.get("SELECT course_id AS id, title FROM Course WHERE course_id = ?", [courseId], (err3, course) => {
+                    res.render("admin_content_edit", { content, course, error: "ชื่อเนื้อหาไม่สามารถเว้นว่างได้" });
+                });
+            });
+            return;
+        }
+        db.run(
+            "UPDATE Course_Content SET topic = ?, content = ?, Questions = ?, A = ?, B = ?, C = ?, D = ?, Answer = ? WHERE content_id = ?",
+            [title, body || "", Questions || "", A || "", B || "", C || "", D || "", Answer || "", req.params.contentId],
+            () => {
+                res.redirect(`/admin/course/${courseId}/contents?msg=edited`);
+            }
+        );
     });
 });
 
