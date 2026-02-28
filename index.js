@@ -38,7 +38,7 @@ function requireLogin(req, res, next) {
 }
 
 function requireAdmin(req, res, next) {
-    if (!req.session.user || req.session.user.role !== "admin") {
+    if (!req.session.user || req.session.user.role != "admin") {
         return res.redirect("/");
     }
     next();
@@ -83,7 +83,7 @@ app.post("/login", (req, res) => {
         return res.render("login", { error: "กรุณากรอกข้อมูลให้ครบ" });
     }
     db.get("SELECT * FROM Account WHERE email = ? OR username = ?", [identifier, identifier], (err, user) => {
-        if (err || !user || password !== user.password) {
+        if (err || !user || password != user.password) {
             return res.render("login", { error: "อีเมล ชื่อผู้ใช้ หรือรหัสผ่านไม่ถูกต้อง" });
         }
         req.session.user = { id: user.account_id, username: user.username, email: user.email, role: user.role, score: user.score };
@@ -118,7 +118,7 @@ app.get("/search", (req, res) => {
             console.log(err.message);
         }
         db.all(allQuery, (err2, allRows) => {
-            res.render("search", { course: rows || [], allCourses: allRows || [], keyword, notFound: !rows || rows.length === 0 });
+            res.render("search", { course: rows || [], allCourses: allRows || [], keyword, notFound: !rows || rows.length == 0 });
         });
     });
 });
@@ -160,7 +160,7 @@ app.get("/library", requireLogin, (req, res) => {
         if (err) {
             console.log(err.message);
         }
-        res.render("library", { course: rows || [], empty: !rows || rows.length === 0 });
+        res.render("library", { course: rows || [], empty: !rows || rows.length == 0 });
     });
 });
 
@@ -172,10 +172,7 @@ app.post("/library/add/:courseId", requireLogin, (req, res) => {
             return res.redirect(`/course/${courseId}?msg=already`);
         }
         db.run("INSERT INTO Account_Library (account_id, course_id) VALUES (?, ?)", [userId, courseId], () => {
-            db.run("UPDATE Account SET score = score + 50 WHERE account_id = ?", [userId], () => {
-                req.session.user.score += 50;
-                res.redirect(`/course/${courseId}?msg=added`);
-            });
+            res.redirect(`/course/${courseId}?msg=added`);
         });
     });
 });
@@ -218,7 +215,7 @@ app.get("/leaderboard", (req, res) => {
         if (err) {
             console.log(err.message);
         }
-        res.render("leaderboard", { board: rows || [], empty: !rows || rows.length === 0 });
+        res.render("leaderboard", { board: rows || [], empty: !rows || rows.length == 0 });
     });
 });
 
@@ -233,7 +230,7 @@ app.get("/profile", requireLogin, (req, res) => {
 
 app.post("/profile", requireLogin, (req, res) => {
     const { username, email } = req.body;
-    if (!username || username.trim() === "" || !email || email.trim() === "") {
+    if (!username || username.trim() == "" || !email || email.trim() == "") {
         db.get("SELECT account_id AS id, username, email, role, score FROM Account WHERE account_id = ?", [req.session.user.id], (err, user) => {
             res.render("profile", { userData: user, error: "ข้อมูลใหม่ไม่ตรงตามเงื่อนไข", success: null });
         });

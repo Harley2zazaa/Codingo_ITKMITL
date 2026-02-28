@@ -10,9 +10,9 @@
         <a href="/admin" class="text-sm text-gray-500 mb-6 inline-block">← กลับหน้าจัดการเนื้อหา</a>
         <h1 class="text-2xl font-bold mb-1">จัดการเนื้อหา</h1>
         <p class="text-gray-500 mb-8">บทเรียน: <span class="text-black font-semibold"><%= course.title %></span></p>
-        <% if (msg === 'added')   { %><div class="bg-green-900/40 border border-green-500 text-green-300 text-sm rounded-lg px-4 py-3 mb-5">เพิ่มเนื้อหาสำเร็จ</div><% } %>
-        <% if (msg === 'deleted') { %><div class="bg-gray-700 border border-gray-500 text-gray-300 text-sm rounded-lg px-4 py-3 mb-5">ลบเนื้อหาสำเร็จ</div><% } %>
-        <% if (msg === 'error')   { %><div class="bg-red-900/40 border border-red-500 text-red-300 text-sm rounded-lg px-4 py-3 mb-5">ข้อมูลที่ต้องการยังไม่ครบถ้วน</div><% } %>
+        <% if (msg == 'added')   { %><div class="bg-green-900/40 border border-green-500 text-green-300 text-sm rounded-lg px-4 py-3 mb-5">เพิ่มเนื้อหาสำเร็จ</div><% } %>
+        <% if (msg == 'deleted') { %><div class="bg-gray-700 border border-gray-500 text-gray-300 text-sm rounded-lg px-4 py-3 mb-5">ลบเนื้อหาสำเร็จ</div><% } %>
+        <% if (msg == 'error')   { %><div class="bg-red-900/40 border border-red-500 text-red-300 text-sm rounded-lg px-4 py-3 mb-5">ข้อมูลที่ต้องการยังไม่ครบถ้วน</div><% } %>
         <div class="bg-white border rounded-2xl p-6 mb-6">
             <h2 class="font-bold mb-4">เพิ่มเนื้อหาใหม่</h2>
             <form method="POST" action="/admin/course/<%= course.id %>/contents/add">
@@ -63,7 +63,7 @@
             </form>
         </div>
         <h2 class="font-bold mb-4">เนื้อหาทั้งหมด (<%= contents.length %> บท)</h2>
-        <% if (contents.length === 0) { %>
+        <% if (contents.length == 0) { %>
             <div class="text-center text-gray-500 py-10">ยังไม่มีเนื้อหา</div>
         <% } else { %>
             <div class="flex flex-col gap-3">

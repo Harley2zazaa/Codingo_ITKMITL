@@ -17,7 +17,7 @@
             <div class="flex flex-col gap-3">
             <% board.forEach((item, index) => { %>
                 <% const medals = ['#1','#2','#3']; %>
-                <% const isMe = user && user.id === item.id; %>
+                <% const isMe = user && user.id == item.id; %>
                 <div class="flex items-center gap-4 bg-white border border-l-8 <%= (isMe) ? 'border-l-orange-500': 'border-l-blue-500'; %> shadow-md rounded-xl px-5 py-4">
                     <div class="w-9 text-center text-lg font-bold flex-shrink-0">
                         <% if (index < 3) { %>
