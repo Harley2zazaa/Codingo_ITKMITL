@@ -7,13 +7,13 @@
             <a href="/search" class="px-1 py-2 text-sm text-black">ค้นหา</a>
             <% if (user) { %>
                 <a href="/library" class="px-1 py-2 text-sm text-black">คลัง</a>
-                <a href="/leaderboard" class="px-1 py-2 text-sm text-black">ตารางอันดับ</a>
+                <a href="/leaderboard" class="px-1 py-2 text-sm text-black">ตาราง</a>
             <% if (user.role == 'admin') { %>
-                <a href="/admin" class="px-4 py-2 text-sm font-medium border border-slate-200 text-slate-700 rounded-lg hover:bg-slate-50 hover:border-slate-300 transition-all duration-200 shadow-sm">จัดการเนื้อหา</a>
+                <a href="/admin" class="px-4 py-2 text-sm font-medium border rounded-lg">จัดการเนื้อหา</a>
             <% } %>
-                <a href="/profile" class="px-3 py-2 text-sm bg-black text-white rounded-md"><%= user.nickname || user.username %><span class="text-orange-500 ml-1 text-xs"><%= user.score %> แต้ม</span></a>
+                <a href="/profile" class="px-3 py-2 text-sm bg-black text-white rounded-lg"><%= user.nickname || user.username %><span class="text-orange-500 ml-1 text-xs"><%= user.score %> แต้ม</span></a>
             <% } else { %>
-                <a href="/login" class="px-3 py-2 text-sm bg-blue-500 text-white rounded-md">เข้าสู่ระบบ</a>
+                <a href="/login" class="px-3 py-2 text-sm bg-blue-500 text-white rounded-lg">เข้าสู่ระบบ</a>
             <% } %>
         </div>
     </div>
