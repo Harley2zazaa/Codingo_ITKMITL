@@ -1,56 +1,44 @@
 <!DOCTYPE html>
 <html lang="th">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Codingo — หน้าหลัก</title>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
-  <style>* { font-family: 'Sarabun', sans-serif; }</style>
+    <%- include('partials/head') %>
+    <title>หน้าหลัก - Codingo</title>
 </head>
-<body class="bg-gray-950 text-gray-100 min-h-screen">
-
-  <%- include('partials/navbar') %>
-
-  <div class="max-w-6xl mx-auto px-6 py-10">
-
-    <!-- หัวข้อ -->
-    <div class="mb-8">
-      <% if (user) { %>
-        <h1 class="text-3xl font-bold mb-1">สวัสดี, <%= user.nickname || user.username %> 👋</h1>
-        <p class="text-gray-400">พร้อมเรียนรู้สิ่งใหม่วันนี้แล้วหรือยัง?</p>
-      <% } else { %>
-        <h1 class="text-3xl font-bold mb-1">บทเรียนทั้งหมด</h1>
-        <p class="text-gray-400">สำรวจเนื้อหาและเริ่มต้นการเรียนรู้</p>
-      <% } %>
+<body class="bg-white">
+    <%- include('partials/navbar') %>
+    <div class="flex flex-col justify-center items-center px-6 text-center py-20">
+        <div class="max-w-3xl">
+            <h1 class="text-6xl font-bold tracking-tight mb-6"><span class="text-blue-500">Co</span>din<span class="text-blue-500">g</span><span class="text-orange-400">o</span></h1>
+            <p class="text-gray-500 text-lg leading-relaxed max-w-2xl mx-auto  mb-6">Codingo คือแพลตฟอร์มเรียนเขียนโปรแกรมภาษาต่าง ๆ พร้อมแบบฝึกหัด และคลังบทเรียนที่ออกแบบมาให้เข้าใจง่าย</p>
+            <div class="flex gap-4 justify-center">
+                <% if (!user) { %>
+                <a href="/login"class="bg-black text-white px-8 py-3 rounded-md text-sm font-medium">เริ่มเรียนเลย</a>
+                <% } else { %>
+                <a href="/library"class="bg-black text-white px-8 py-3 rounded-md text-sm font-medium">คลังของฉัน</a>
+                <% } %>
+                <a href="/search"class="border border-gray-300 px-8 py-3 rounded-md text-sm font-medium">ค้นหาบทเรียน</a>
+            </div>
+        </div>
     </div>
-
-    <!-- กริดบทเรียน -->
-    <% if (lessons.length === 0) { %>
-      <p class="text-gray-400 text-center py-20">ยังไม่มีบทเรียนในระบบ</p>
-    <% } else { %>
-      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
-        <% lessons.forEach((item) => { %>
-          <a href="/lessons/<%= item.id %>" class="block bg-gray-800 border border-gray-700 rounded-xl hover:border-yellow-400 hover:shadow-lg transition-all overflow-hidden">
-            <!-- สีปก -->
-            <div class="h-2 w-full"
-              style="background: <%= item.category === 'Python' ? '#3b82f6' : item.category === 'JavaScript' ? '#f59e0b' : item.category === 'Web' ? '#f97316' : item.category === 'Database' ? '#10b981' : item.category === 'DevTools' ? '#8b5cf6' : item.category === 'Backend' ? '#06b6d4' : item.category === 'Computer Science' ? '#ec4899' : '#6b7280' %>">
+    <div class="bg-gray-50 py-20 px-6">
+        <div class="max-w-6xl mx-auto">
+            <h2 class="text-3xl font-bold text-center mb-14">ทำไมต้องเรียนกับ Codingo</h2>
+            <div class="grid md:grid-cols-3 gap-10">
+                <div class="bg-white p-8 rounded-lg border border-gray-100">
+                    <h3 class="font-semibold text-lg mb-3">บทเรียนที่หลากหลาย</h3>
+                    <p class="text-gray-500 text-sm leading-relaxed">บทเรียนที่หลากหลายให้เลือกเรียน ไม่ว่าจะเป็น Javascript HTML&CSS Python Node.js และอื่น ๆ</p>
+                </div>
+                <div class="bg-white p-8 rounded-lg border border-gray-100">
+                    <h3 class="font-semibold text-lg mb-3">สะสมคะแนนเพื่อเป็นหัวแถว</h3>
+                    <p class="text-gray-500 text-sm leading-relaxed">ระบบการสะสมคะแนนที่มาจากการเข้าเรียน และทำแบบฝึกหัดในบทเรียนนั้น ๆ เพื่ออันดับของคุณ!</p>
+                </div>
+                <div class="bg-white p-8 rounded-lg border border-gray-100">
+                    <h3 class="font-semibold text-lg mb-3">เหมาะกับผู้เริ่มต้น</h3>
+                    <p class="text-gray-500 text-sm leading-relaxed">เนื้อหาในบทเรียนที่เข้าใจง่าย และมี UI ที่ใช้งานได้สะดวก เป็นมิตรกับผู้เริ่มต้น</p>
+                </div>
             </div>
-            <div class="p-5">
-              <div class="flex items-center justify-between mb-2">
-                <span class="text-xs font-semibold px-2 py-0.5 rounded-full bg-gray-700 text-gray-300">
-                  <%= item.category %>
-                </span>
-                <span class="text-xs text-gray-500"><%= item.content_count %> หัวข้อ</span>
-              </div>
-              <h2 class="font-bold text-base text-white mb-1"><%= item.title %></h2>
-              <p class="text-sm text-gray-400 line-clamp-2"><%= item.description %></p>
-            </div>
-          </a>
-        <% }); %>
-      </div>
-    <% } %>
-
-  </div>
+        </div>
+    </div>
+    <%- include('partials/footer') %>
 </body>
 </html>

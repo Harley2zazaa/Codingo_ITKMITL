@@ -1,59 +1,37 @@
 <!DOCTYPE html>
 <html lang="th">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Codingo — คลังส่วนตัว</title>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
-  <style>* { font-family: 'Sarabun', sans-serif; }</style>
+    <%- include('partials/head') %>
+    <title>คลังส่วนตัว - Codingo</title>
 </head>
-<body class="bg-gray-950 text-gray-100 min-h-screen">
-
-  <%- include('partials/navbar') %>
-
-  <div class="max-w-6xl mx-auto px-6 py-10">
-    <h1 class="text-3xl font-bold mb-2">คลังส่วนตัว</h1>
-    <p class="text-gray-400 mb-8">บทเรียนที่คุณเพิ่มไว้</p>
-
-    <% if (empty) { %>
-      <div class="text-center py-24">
-        <p class="text-5xl mb-3">📚</p>
-        <p class="text-gray-400 text-lg font-semibold">ยังไม่มีบทเรียนในคลัง</p>
-        <p class="text-gray-600 text-sm mt-1">ไปค้นหาบทเรียนที่สนใจ แล้วกด "เพิ่มเข้าคลัง"</p>
-        <a href="/search" class="inline-block mt-5 bg-yellow-500 hover:bg-yellow-400 text-black font-semibold px-6 py-2.5 rounded-lg text-sm transition">
-          ค้นหาบทเรียน
-        </a>
-      </div>
-    <% } else { %>
-      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
-        <% lessons.forEach((item) => { %>
-          <%
-            const pct = item.content_count > 0 ? Math.round((item.done / item.content_count) * 100) : 0;
-          %>
-          <a href="/lessons/<%= item.id %>" class="block bg-gray-800 border border-gray-700 rounded-xl hover:border-yellow-400 transition-all overflow-hidden">
-            <div class="h-2 w-full"
-              style="background: <%= item.category === 'Python' ? '#3b82f6' : item.category === 'JavaScript' ? '#f59e0b' : item.category === 'Web' ? '#f97316' : item.category === 'Database' ? '#10b981' : item.category === 'DevTools' ? '#8b5cf6' : item.category === 'Backend' ? '#06b6d4' : item.category === 'Computer Science' ? '#ec4899' : '#6b7280' %>">
+<body class="bg-white">
+    <%- include('partials/navbar') %>
+    <div class="max-w-6xl mx-auto px-6 py-10 min-h-screen">
+        <h1 class="text-3xl font-bold mb-2">คลังส่วนตัว</h1>
+        <p class="text-gray-500 mb-8">บทเรียนที่คุณเพิ่มไว้</p>
+        <% if (empty) { %>
+            <div class="text-center py-24">
+                <p class="text-black text-lg font-semibold">ยังไม่มีบทเรียนในคลัง</p>
+                <p class="text-gray-600 text-sm mt-1">ไปค้นหาบทเรียนที่สนใจ แล้วกด "เพิ่มเข้าคลัง"</p>
+                <a href="/search" class="inline-block mt-5 bg-blue-500 text-white px-6 py-2.5 rounded-lg text-sm">ค้นหาบทเรียน</a>
             </div>
-            <div class="p-5">
-              <div class="flex items-center justify-between mb-2">
-                <span class="text-xs px-2 py-0.5 rounded-full bg-gray-700 text-gray-300"><%= item.category %></span>
-                <span class="text-xs text-gray-500"><%= item.done %>/<%= item.content_count %> บท</span>
-              </div>
-              <h2 class="font-bold text-white mb-3"><%= item.title %></h2>
-              <!-- Progress bar -->
-              <div class="h-1.5 bg-gray-700 rounded-full overflow-hidden">
-                <div class="h-full rounded-full transition-all
-                  <%= pct === 100 ? 'bg-green-500' : 'bg-yellow-500' %>"
-                  style="width: <%= pct %>%">
-                </div>
-              </div>
-              <p class="text-xs text-gray-500 mt-1.5"><%= pct %>% เสร็จสิ้น</p>
+        <% } else { %>
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+                <% course.forEach((item) => { %>
+                    <a href="/course/<%= item.id %>" class="block bg-white border rounded-xl shadow-md overflow-hidden" style="border-left: 8px solid <%= item.color || '#6b7280' %>">
+                        <div class="p-5">
+                            <h2 class="font-bold text-base text-black mb-1"><%= item.title %></h2>
+                            <div class="flex items-center justify-between my-2">
+                                <span class="text-xs font-semibold px-2 py-1 rounded-lg bg-gray-700 text-gray-300"><%= item.category %></span>
+                                <span class="text-xs text-gray-500"><%= item.content_count %> หัวข้อ</span>
+                            </div>
+                            <p class="text-sm text-gray-500 line-clamp-2"><%= item.description %></p>
+                        </div>
+                    </a>
+                <% }); %>
             </div>
-          </a>
-        <% }); %>
-      </div>
-    <% } %>
-  </div>
+        <% } %>
+    </div>
+    <%- include('partials/footer') %>
 </body>
 </html>

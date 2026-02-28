@@ -1,0 +1,8 @@
+@font-face {
+    font-family: Prompt;
+    src: url(/font/Kanit-Regular.ttf);
+}
+
+* {
+    font-family: "Prompt", sans-serif;
+}

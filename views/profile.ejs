@@ -1,58 +1,42 @@
 <!DOCTYPE html>
 <html lang="th">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Codingo — รายละเอียดส่วนตัว</title>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
-  <style>* { font-family: 'Sarabun', sans-serif; }</style>
+    <%- include('partials/head') %>
+    <title>รายละเอียดส่วนตัว - Codingo</title>
 </head>
-<body class="bg-gray-950 text-gray-100 min-h-screen">
-
-  <%- include('partials/navbar') %>
-
-  <div class="max-w-xl mx-auto px-6 py-10">
-    <h1 class="text-3xl font-bold mb-8">รายละเอียดส่วนตัว</h1>
-
-    <div class="bg-gray-800 border border-gray-700 rounded-2xl p-7">
-
-      <!-- ข้อมูลที่ไม่เปิดเผย -->
-      <div class="bg-gray-700/50 rounded-xl p-4 mb-6">
-        <p class="text-xs text-gray-500 mb-2 font-semibold uppercase tracking-wide">ข้อมูลส่วนตัว (ไม่เปิดเผย)</p>
-        <p class="text-sm text-gray-300">ชื่อจริง: <span class="text-white"><%= userData.username %></span></p>
-        <p class="text-sm text-gray-300 mt-1">อีเมล: <span class="text-white"><%= userData.email %></span></p>
-        <p class="text-sm text-gray-300 mt-1">คะแนนสะสม: <span class="text-yellow-400 font-bold"><%= userData.score %> แต้ม</span></p>
-      </div>
-
-      <!-- แจ้งเตือน -->
-      <% if (error) { %>
-        <div class="bg-red-900/40 border border-red-500 text-red-300 text-sm rounded-lg px-4 py-3 mb-5">
-          <%= error %>
+<body class="bg-white">
+    <%- include('partials/navbar') %>
+    <div class="max-w-xl mx-auto px-6 py-10 min-h-screen">
+        <a href="/" class="text-sm text-gray-400 mb-6 inline-block">← ย้อนกลับ</a>
+        <h1 class="text-3xl font-bold mb-8">รายละเอียดส่วนตัว</h1>
+        <div class="bg-white border shadow-md rounded-2xl p-7">
+            <div class="bg-white rounded-xl p-4 mb-6 border">
+                <p class="text-sm text-gray-500 mt-1">คะแนนสะสม: <span class="text-orange-500 font-bold"><%= userData.score %> แต้ม</span></p>
+            </div>
+            <% if (error) { %>
+                <div class="bg-red-900 border border-red-500 text-red-300 text-sm rounded-lg px-4 py-3 mb-5">
+                    <%= error %>
+                </div>
+            <% } %>
+            <% if (success) { %>
+                <div class="bg-green-900 border border-green-500 text-green-300 text-sm rounded-lg px-4 py-3 mb-5">
+                    <%= success %>
+                </div>
+            <% } %>
+            <form action="/profile" method="POST">
+                <div class="mb-5">
+                    <label class="block text-sm text-gray-500 mb-1.5">ชื่อผู้ใช้</label>
+                    <input type="text" name="username" value="<%= userData.username || '' %>" class="w-full bg-white border rounded-lg px-4 py-2.5 text-sm text-black focus:outline-none" placeholder="เช่น admin"/>
+                </div>
+                <div class="mb-5">
+                    <label class="block text-sm text-gray-500 mb-1.5">อีเมล</label>
+                    <input type="text" name="email" value="<%= userData.email || '' %>" class="w-full bg-white border rounded-lg px-4 py-2.5 text-sm text-black focus:outline-none" placeholder="เช่น admin@it.kmitl.ac.th"/>
+                </div>
+                <button type="submit" class="bg-blue-500 text-white px-6 py-2.5 rounded-lg text-sm">บันทึกการเปลี่ยนแปลง</button>
+                <a href="/logout" class="px-3 py-1.5 text-sm text-black hover:text-red-500">ออกจากระบบ</a>
+            </form>
         </div>
-      <% } %>
-      <% if (success) { %>
-        <div class="bg-green-900/40 border border-green-500 text-green-300 text-sm rounded-lg px-4 py-3 mb-5">
-          <%= success %>
-        </div>
-      <% } %>
-
-      <!-- ฟอร์มแก้ไข -->
-      <form method="POST" action="/profile">
-        <div class="mb-5">
-          <label class="block text-sm text-gray-400 mb-1.5">ชื่อเล่น (เปิดเผย)</label>
-          <input type="text" name="nickname" value="<%= userData.nickname || '' %>"
-            placeholder="ชื่อเล่นที่แสดงต่อสาธารณะ"
-            class="w-full bg-gray-700 border border-gray-600 rounded-lg px-4 py-2.5 text-sm text-white focus:outline-none focus:border-yellow-400" />
-          <p class="text-xs text-gray-600 mt-1">ชื่อเล่นจะแสดงใน Leaderboard และ Navbar</p>
-        </div>
-        <button type="submit"
-          class="bg-yellow-500 hover:bg-yellow-400 text-black font-semibold px-6 py-2.5 rounded-lg text-sm transition">
-          บันทึกการเปลี่ยนแปลง
-        </button>
-      </form>
-
     </div>
-  </div>
+    <%- include('partials/footer') %>
 </body>
 </html>
