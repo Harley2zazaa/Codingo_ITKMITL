@@ -4,7 +4,7 @@
     <%- include('partials/head') %>
     <title><%= course.title %> - Codingo</title>
 </head>
-<body class="bg-white">
+<body class="bg-white pt-16">
     <%- include('partials/navbar') %>
     <div class="max-w-3xl mx-auto px-6 py-10 min-h-screen">
         <a href="/search" class="text-sm text-gray-500 mb-6 inline-block">← ย้อนกลับ</a>
@@ -81,7 +81,7 @@
                 alert('กรุณาเพิ่มเข้าคลังเพื่อเข้าเรียน');
             }
         }
-        
+
         function checkAnswer(btn, correctAnswer, contentId, canComplete) {
             const container = btn.closest('.bg-gray-50');
             const selected = container.querySelector('input[type="radio"]:checked');
