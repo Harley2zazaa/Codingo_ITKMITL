@@ -6,11 +6,11 @@ const session = require("express-session");
 const app = express();
 const port = 3000;
 
-let db = new sqlite3.Database("database.db", (err) => {
+let db = new sqlite3.Database("codingo.db", (err) => {
     if (err) {
         return console.error(err.message);
     }
-    console.log("Connected to database.db");
+    console.log("Connected to codingo.db");
 });
 
 app.use(express.static("public"));
