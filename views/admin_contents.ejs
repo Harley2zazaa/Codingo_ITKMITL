@@ -10,10 +10,10 @@
         <a href="/admin" class="text-sm text-gray-500 mb-6 inline-block">← กลับหน้าจัดการเนื้อหา</a>
         <h1 class="text-2xl font-bold mb-1">จัดการเนื้อหา</h1>
         <p class="text-gray-500 mb-8">บทเรียน: <span class="text-black font-semibold"><%= course.title %></span></p>
-        <% if (msg == 'added')   { %><div class="bg-white-900/40 border border-green-500 text-green-500 text-sm rounded-lg px-4 py-3 mb-5">เพิ่มเนื้อหาสำเร็จ</div><% } %>
-        <% if (msg == 'edited')  { %><div class="bg-white-900/40 border border-green-500 text-green-500 text-sm rounded-lg px-4 py-3 mb-5">แก้ไขเนื้อหาสำเร็จ</div><% } %>
-        <% if (msg == 'deleted') { %><div class="bg-gray-700 border border-gray-500 text-gray-500 text-sm rounded-lg px-4 py-3 mb-5">ลบเนื้อหาสำเร็จ</div><% } %>
-        <% if (msg == 'error')   { %><div class="bg-red-900/40 border border-red-500 text-red-500 text-sm rounded-lg px-4 py-3 mb-5">ข้อมูลที่ต้องการยังไม่ครบถ้วน</div><% } %>
+        <% if (msg == 'added')   { %><div class="bg-green-50 border border-green-200 text-green-700 text-sm rounded-lg px-4 py-3 mb-5">เพิ่มเนื้อหาสำเร็จ</div><% } %>
+        <% if (msg == 'edited')  { %><div class="bg-blue-50 border border-blue-200 text-blue-700 text-sm rounded-lg px-4 py-3 mb-5">แก้ไขเนื้อหาสำเร็จ</div><% } %>
+        <% if (msg == 'deleted') { %><div class="bg-red-50 border border-red-200 text-red-700 text-sm rounded-lg px-4 py-3 mb-5">ลบเนื้อหาสำเร็จ</div><% } %>
+        <% if (msg == 'error')   { %><div class="bg-red-50 border border-red-200 text-red-700 text-sm rounded-lg px-4 py-3 mb-5">ข้อมูลที่ต้องการยังไม่ครบถ้วน</div><% } %>
         <div class="bg-white border rounded-2xl p-6 mb-6">
             <h2 class="font-bold mb-4">เพิ่มเนื้อหาใหม่</h2>
             <form action="/admin/add/course/<%= course.id %>/content" method="POST">
@@ -34,25 +34,24 @@
                     <div class="grid grid-cols-2 gap-3 mb-3">
                         <div>
                             <label class="block text-sm text-gray-500 mb-1.5">ตัวเลือก A</label>
-                            <input type="text" name="A" placeholder="ตัวเลือก A" class="w-full bg-white border rounded-lg px-4 py-2.5 text-sm text-black placeholder-gray-500 focus:outline-none" />
+                            <input type="text" name="A" placeholder="ตัวเลือก A" class="w-full bg-white border rounded-lg px-4 py-2.5 text-sm text-black placeholder-gray-500 focus:outline-none" required/>
                         </div>
                         <div>
                             <label class="block text-sm text-gray-500 mb-1.5">ตัวเลือก B</label>
-                            <input type="text" name="B" placeholder="ตัวเลือก B" class="w-full bg-white border rounded-lg px-4 py-2.5 text-sm text-black placeholder-gray-500 focus:outline-none" />
+                            <input type="text" name="B" placeholder="ตัวเลือก B" class="w-full bg-white border rounded-lg px-4 py-2.5 text-sm text-black placeholder-gray-500 focus:outline-none" required/>
                         </div>
                         <div>
                             <label class="block text-sm text-gray-500 mb-1.5">ตัวเลือก C</label>
-                            <input type="text" name="C" placeholder="ตัวเลือก C" class="w-full bg-white border rounded-lg px-4 py-2.5 text-sm text-black placeholder-gray-500 focus:outline-none" />
+                            <input type="text" name="C" placeholder="ตัวเลือก C" class="w-full bg-white border rounded-lg px-4 py-2.5 text-sm text-black placeholder-gray-500 focus:outline-none" required/>
                         </div>
                         <div>
                             <label class="block text-sm text-gray-500 mb-1.5">ตัวเลือก D</label>
-                            <input type="text" name="D" placeholder="ตัวเลือก D" class="w-full bg-white border rounded-lg px-4 py-2.5 text-sm text-black placeholder-gray-500 focus:outline-none" />
+                            <input type="text" name="D" placeholder="ตัวเลือก D" class="w-full bg-white border rounded-lg px-4 py-2.5 text-sm text-black placeholder-gray-500 focus:outline-none" required/>
                         </div>
                     </div>
                     <div>
                         <label class="block text-sm text-gray-500 mb-1.5">เฉลย (A, B, C หรือ D)</label>
                         <select name="Answer" class="w-32 bg-white border rounded-lg px-4 py-2.5 text-sm text-black focus:outline-none">
-                            <option value="">-- ไม่ระบุ --</option>
                             <option value="A">A</option>
                             <option value="B">B</option>
                             <option value="C">C</option>
@@ -60,7 +59,7 @@
                         </select>
                     </div>
                 </div>
-                <button type="submit" class="bg-blue-500 text-white px-5 py-2.5 rounded-lg text-sm">+ เพิ่มเนื้อหา</button>
+                <button type="submit" class="bg-green-600 text-white px-5 py-2.5 rounded-lg text-sm">+ เพิ่มเนื้อหา</button>
             </form>
         </div>
         <h2 class="font-bold mb-4">เนื้อหาทั้งหมด (<%= contents.length %> บท)</h2>
@@ -86,9 +85,9 @@
                                 </div>
                             </div>
                             <div class="flex items-center gap-2 flex-shrink-0">
-                                <a href="/admin/edit/course/<%= item.course_id %>/content/<%= item.id %>" class="text-xs px-3 py-1.5 bg-blue-50 border border-blue-200 rounded-md text-blue-600">แก้ไข</a>
+                                <a href="/admin/edit/course/<%= item.course_id %>/content/<%= item.id %>" class="text-xs px-3 py-1.5 bg-blue-500 border border-blue-500 rounded-md text-white">แก้ไข</a>
                                 <form action="/admin/delete/course/<%= item.course_id %>/content/<%= item.id %>" method="POST" onsubmit="return confirm('ลบเนื้อหานี้ใช่หรือไม่?')">
-                                    <button type="submit" class="text-xs px-3 py-1.5 bg-red-900 border border-red-800 rounded-md text-red-400">ลบ</button>
+                                    <button type="submit" class="text-xs px-3 py-1.5 bg-red-600 border border-red-600 rounded-md text-white">ลบ</button>
                                 </form>
                             </div>
                         </div>

@@ -13,7 +13,7 @@
         </h1>
         <div class="bg-white border rounded-2xl p-7">
             <% if (error) { %>
-            <div class="bg-red-900 border border-red-500 text-red-300 text-sm rounded-lg px-4 py-3 mb-5">
+            <div class="bg-red-50 border border-red-200 text-red-700 text-sm rounded-lg px-4 py-3 mb-5">
                 <%= error %>
             </div>
             <% } %>
@@ -29,7 +29,6 @@
                 <div class="mb-7">
                     <label class="block text-sm text-gray-500 mb-1.5">หมวดหมู่</label>
                     <select name="catagory_id" class="w-full bg-white border rounded-lg px-4 py-2.5 text-sm text-black focus:outline-none">
-                        <option value="">-- ไม่ระบุหมวดหมู่ --</option>
                         <% categories.forEach(cat => { %>
                             <option value="<%= cat.catagory_id %>" <%= course && course.catagory_id === cat.catagory_id ? 'selected' : '' %>>
                                 <%= cat.catagory_name %>
@@ -38,7 +37,7 @@
                     </select>
                 </div>
                 <div class="flex gap-3">
-                    <button type="submit" class="bg-blue-500 text-white px-6 py-2.5 rounded-lg text-sm"><%= course ? 'บันทึกการแก้ไข' : 'เพิ่มบทเรียน' %></button>
+                    <button type="submit" class="bg-green-600 text-white px-6 py-2.5 rounded-lg text-sm"><%= course ? 'บันทึกการแก้ไข' : 'เพิ่มบทเรียน' %></button>
                     <a href="/admin" class="px-6 py-2.5 text-sm text-gray-500 border rounded-lg">ยกเลิก</a>
                 </div>
             </form>
