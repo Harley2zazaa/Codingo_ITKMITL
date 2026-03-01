@@ -371,7 +371,7 @@ app.post("/admin/edit/course/:id/content/:cid", requireAdmin, (req, res) => {
             return;
         }
         db.run("UPDATE Course_Content SET topic = ?, content = ?, Questions = ?, A = ?, B = ?, C = ?, D = ?, Answer = ? WHERE content_id = ?", [title, body || "", Questions || "", A || "", B || "", C || "", D || "", Answer || "", req.params.cid], () => {
-            res.redirect(`/admin/edit/course/${courseId}/content/${req.params.cid}?msg=edited`);
+            res.redirect(`/admin/edit/course/${courseId}/content?msg=edited`);
         });
     });
 });
