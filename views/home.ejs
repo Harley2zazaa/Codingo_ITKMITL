@@ -8,8 +8,8 @@
     <%- include('partials/navbar') %>
     <div class="flex flex-col justify-center items-center px-6 text-center py-20 min-h-screen">
         <div class="max-w-3xl">
-            <h1 id="typing" class="text-6xl font-bold tracking-tight mb-6"></h1>
-            <p class="text-gray-500 text-lg leading-relaxed max-w-2xl mx-auto  mb-6">Codingo คือแพลตฟอร์มเรียนเขียนโปรแกรมภาษาต่าง ๆ พร้อมแบบฝึกหัด และคลังบทเรียนที่ออกแบบมาให้เข้าใจง่าย</p>
+            <img src="/img/codingo_logo.png" class="h-24 mx-auto">
+            <p class="text-gray-500 text-lg leading-relaxed max-w-2xl mx-auto mb-6">Codingo คือแพลตฟอร์มเรียนเขียนโปรแกรมภาษาต่าง ๆ พร้อมแบบฝึกหัด และคลังบทเรียนที่ออกแบบมาให้เข้าใจง่าย</p>
             <div class="flex gap-4 justify-center">
                 <% if (!user) { %>
                 <a href="/login"class="bg-gray-700 text-white px-8 py-3 rounded-md text-sm font-medium">เริ่มเรียนเลย</a>
@@ -22,7 +22,7 @@
     </div>
     <div class="bg-gray-50 py-20 px-6">
         <div class="max-w-6xl mx-auto">
-            <h2 class="text-3xl font-bold text-center mb-14">ทำไมต้องเรียนกับ Codingo</h2>
+            <h2 class="text-3xl font-bold text-center mb-14">ทำไมต้องเรียนกับ <span class="text-blue-400">Co</span>din<span class="text-blue-400">g</span><span class="text-orange-400">o</span></h2>
             <div class="grid md:grid-cols-3 gap-10">
                 <div class="bg-white p-8 rounded-lg border shadow-md">
                     <h3 class="font-semibold text-lg mb-3">บทเรียนที่หลากหลาย</h3>
@@ -40,23 +40,5 @@
         </div>
     </div>
     <%- include('partials/footer') %>
-    <script>
-        const text = [
-            { char: "C", class: "text-blue-500" },
-            { char: "o", class: "text-blue-500" },
-            { char: "d", class: "" },
-            { char: "i", class: "" },
-            { char: "n", class: "" },
-            { char: "g", class: "text-blue-500" },
-            { char: "o", class: "text-orange-400" }
-        ];
-        let i = 0;
-        const el = document.getElementById("typing");
-        const timer = setInterval(() => {
-            el.innerHTML += text[i].class ? `<span class="${text[i].class}">${text[i].char}</span>` : text[i].char;
-            i++;
-            if (i == text.length) clearInterval(timer);
-        }, 120);
-    </script>
 </body>
 </html>
