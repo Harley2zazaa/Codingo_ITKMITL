@@ -11,7 +11,7 @@
         <h1 class="text-3xl font-bold mb-8">รายละเอียดส่วนตัว</h1>
         <div class="bg-white border shadow-md rounded-2xl p-7">
             <div class="bg-white rounded-xl p-4 mb-6 border">
-                <p class="text-sm text-gray-500 mt-1">คะแนนสะสม: <span class="text-orange-500 font-bold"><%= userData.score %> แต้ม</span></p>
+                <p class="text-sm text-gray-500 mt-1">คะแนนสะสม: <span class="text-orange-500 font-bold"><%= userData.score %> คะแนน</span></p>
             </div>
             <% if (error) { %>
                 <div class="bg-red-50 border border-red-200 text-red-700 text-sm rounded-lg px-4 py-3 mb-5">
@@ -30,7 +30,7 @@
                 </div>
                 <div class="mb-5">
                     <label class="block text-sm text-gray-500 mb-1.5">อีเมล</label>
-                    <input type="text" name="email" value="<%= userData.email || '' %>" class="w-full bg-white border rounded-lg px-4 py-2.5 text-sm text-black focus:outline-none" placeholder="เช่น admin@it.kmitl.ac.th"/>
+                    <input type="text" name="email" value="<%= userData.email || '' %>" class="w-full bg-white border rounded-lg px-4 py-2.5 text-sm text-black focus:outline-none" placeholder="e.g. your@email.com"/>
                 </div>
                 <div class="flex items-center justify-between mt-6">
                     <button type="submit" class="bg-blue-500 text-white px-6 py-2.5 rounded-lg text-sm font-medium hover:bg-blue-600 transition-colors">บันทึกการเปลี่ยนแปลง</button>

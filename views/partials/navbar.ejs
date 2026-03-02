@@ -11,7 +11,7 @@
             <% if (user.role == 'admin') { %>
                 <a href="/admin" class="px-4 py-2 text-sm font-medium border rounded-lg">จัดการเนื้อหา</a>
             <% } %>
-                <a href="/profile" class="px-3 py-2 text-sm bg-gray-800 text-white rounded-lg"><%= user.nickname || user.username %><span class="text-orange-500 ml-1 text-xs"><%= user.score %> คะแนน</span></a>
+                <a href="/profile" class="px-3 py-2 text-sm bg-gray-700 text-white rounded-lg"><%= user.nickname || user.username %><span class="text-orange-500 ml-1 text-xs"><%= user.score %> คะแนน</span></a>
             <% } else { %>
                 <a href="/login" class="px-3 py-2 text-sm bg-blue-500 text-white rounded-lg">เข้าสู่ระบบ</a>
             <% } %>
