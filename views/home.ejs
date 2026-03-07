@@ -6,13 +6,13 @@
 </head>
 <body class="bg-white">
     <%- include('partials/header') %>
-    <div class="flex flex-col justify-center items-center px-6 text-center py-20 min-h-screen">
+    <div class="flex justify-center items-center px-6 text-center min-h-screen">
         <div class="max-w-3xl">
             <img src="/img/codingo_logo.png" class="h-24 mx-auto">
-            <p class="text-gray-500 text-lg leading-relaxed max-w-2xl mx-auto mb-6">Codingo คือแพลตฟอร์มเรียนเขียนโปรแกรมภาษาต่าง ๆ พร้อมแบบฝึกหัด และคลังบทเรียนที่ออกแบบมาให้เข้าใจง่าย</p>
+            <p class="text-gray-600 text-lg max-w-2xl mb-6 mx-auto">ระบบจัดการเรียนรู้ทักษะการเขียนโปรแกรมคอมพิวเตอร์สำหรับการศึกษาและพัฒนาตนเอง</p>
             <div class="flex gap-4 justify-center">
-                <a href="/<%- user ? 'library': 'signin' %>" class="bg-gray-700 text-white px-8 py-3 rounded-md text-sm font-medium"><%- user ? "คลังของฉัน": "เริ่มเรียนเลย" %></a>
-                <a href="/course" class="border px-8 py-3 rounded-md text-sm font-medium">ค้นหาบทเรียน</a>
+                <a href="/<%- user ? 'library': 'signin' %>" class="bg-gray-800 text-white px-4 py-3 rounded-xl text-sm"><%- user ? "คลังของฉัน": "เริ่มเรียนเลย" %></a>
+                <a href="/course" class="border px-4 py-3 rounded-xl text-sm">ค้นหาบทเรียน</a>
             </div>
         </div>
     </div>

@@ -61,10 +61,7 @@ app.get("/register", (req, res) => {
 });
 
 app.post("/register", (req, res) => {
-    let { username, email, password } = req.body;
-    if (!username || !email || !password) {
-        return res.render("register", { error: "กรุณากรอกข้อมูลให้ครบ" });
-    }
+    let { email, password, username } = req.body;
     let sql1 = `SELECT *
                 FROM Account
                 WHERE email = ? OR username = ?`;
@@ -270,10 +267,7 @@ app.post("/library/:courseId/:contentId", (req, res) => {
                                     WHERE account_id = ? AND course_id = ? AND completed = 1`;
                         db.all(sql5, [req.session.user.account_id, courseId], (_, progRows) => {
                             const completedIds = (progRows || []).map(r => r.content_id);
-                            res.render("content", {
-                                course, contents: contents || [], inLibrary: true,
-                                activeContent: content, result: correct ? "correct" : "wrong",
-                                completedIds
+                            res.render("content", { course, contents: contents || [], inLibrary: true, activeContent: content, result: correct ? "correct" : "wrong", completedIds
                             });
                         });
                     });
@@ -345,32 +339,19 @@ app.post("/profile", (req, res) => {
         return res.redirect("/signin");
     }
     let { username, email, password } = req.body;
-    if (!username || !email || !password) {
-        let sql1 = `SELECT *
-                    FROM Account
-                    WHERE account_id = ?`;
-        return db.get(sql1, [req.session.user.account_id], (_, user) => {
-            let sql2 = `SELECT *
-                        FROM Gamificate
-                        WHERE account_id = ?`;
-            db.get(sql2, [req.session.user.account_id], (_, gamificate) => {
-                res.render("profile", { profileUser: user, gamificate: gamificate || null, error: "กรุณากรอกข้อมูลให้ครบ", success: null });
-            });
-        });
-    }
-    let sql3 = `UPDATE Account
+    let sql1 = `UPDATE Account
                 SET username = ?, email = ?, password = ?
                 WHERE account_id = ?`;
-    db.run(sql3, [username, email, password, req.session.user.account_id], (_) => {
-        let sql4 = `SELECT *
+    db.run(sql1, [username, email, password, req.session.user.account_id], (_) => {
+        let sql2 = `SELECT *
                     FROM Account
                     WHERE account_id = ?`;
-        db.get(sql4, [req.session.user.account_id], (_, user) => {
+        db.get(sql2, [req.session.user.account_id], (_, user) => {
             req.session.user = user;
-            let sql5 = `SELECT *
+            let sql3 = `SELECT *
                         FROM Gamificate
                         WHERE account_id = ?`;
-            db.get(sql5, [req.session.user.account_id], (_, gamificate) => {
+            db.get(sql3, [req.session.user.account_id], (_, gamificate) => {
                 res.render("profile", { profileUser: user, gamificate: gamificate || null, error: null, success: "บันทึกข้อมูลเรียบร้อย" });
             });
         });

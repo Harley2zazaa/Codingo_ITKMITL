@@ -4,51 +4,49 @@
     <%- include('partials/head') %>
     <title>เพิ่มเนื้อหา - Codingo</title>
 </head>
-<body class="bg-white pt-16">
+<body class="bg-white">
     <%- include('partials/header') %>
-    <div class="max-w-2xl mx-auto px-6 py-10 min-h-screen">
-        <a href="/instructor/edit/<%= courseId %>" class="text-sm text-gray-500 mb-6 inline-block">← กลับหน้าแก้ไขบทเรียน</a>
-        <h1 class="text-2xl font-bold mb-8">เพิ่มเนื้อหาใหม่</h1>
-        <div class="bg-white border rounded-2xl p-6 mb-6">
-            <% if (error) { %>
-            <div class="bg-red-50 border border-red-200 text-red-700 text-sm rounded-lg px-4 py-3 mb-5"><%= error %></div>
-            <% } %>
+    <div class="max-w-4xl mx-auto p-6 pt-24 min-h-screen">
+        <a href="/instructor/edit/<%= courseId %>" class="text-sm text-gray-600 mb-6 inline-block"><-- ย้อนกลับ</a>
+        <h1 class="text-3xl text-gray-800 mb-1">เพิ่มเนื้อหาใหม่</h1>
+        <p class="text-gray-600 mb-6">เพิ่มเนื้อหาในระบบ</p>
+        <div class="bg-white border rounded-xl p-8 mb-8 shadow-md">
             <form action="/instructor/create/<%= courseId %>" method="POST">
                 <div class="mb-4">
-                    <label class="block text-sm text-gray-500 mb-1.5">ชื่อหัวข้อ (topic) <span class="text-red-400">*</span></label>
-                    <input type="text" name="topic" placeholder="เช่น โครงสร้างพื้นฐานของ HTML5" required class="w-full bg-white border rounded-lg px-4 py-2.5 text-sm text-black placeholder-gray-500 focus:outline-none" />
+                    <label class="block text-sm text-gray-600 mb-2">ชื่อหัวข้อ<span class="text-red-400">*</span></label>
+                    <input type="text" name="topic" placeholder="เช่น โครงสร้างพื้นฐานของ HTML5" required class="w-full bg-white border rounded-xl px-4 py-3 text-sm text-gray-800 placeholder-gray-600"/>
                 </div>
                 <div class="mb-4">
-                    <label class="block text-sm text-gray-500 mb-1.5">เนื้อหา</label>
-                    <textarea name="content" rows="4" placeholder="เนื้อหาของบทนี้..." class="w-full bg-white border rounded-lg px-4 py-2.5 text-sm text-black placeholder-gray-500 focus:outline-none resize-none"></textarea>
+                    <label class="block text-sm text-gray-600 mb-2">เนื้อหา</label>
+                    <textarea name="content" rows="4" placeholder="เนื้อหาของบทนี้..." required class="w-full bg-white border rounded-xl px-4 py-3 text-sm text-gray-800 placeholder-gray-600 resize-none"></textarea>
                 </div>
                 <div class="border-t pt-4 mt-2 mb-4">
-                    <p class="text-sm font-semibold text-gray-700 mb-3">แบบทดสอบ (ตัวเลือก)</p>
-                    <div class="mb-3">
-                        <label class="block text-sm text-gray-500 mb-1.5">คำถาม</label>
-                        <input type="text" name="Questions" placeholder="คำถามแบบทดสอบ..." class="w-full bg-white border rounded-lg px-4 py-2.5 text-sm text-black placeholder-gray-500 focus:outline-none" />
+                    <p class="text-sm font-semibold text-gray-700 mb-2">แบบทดสอบ</p>
+                    <div class="mb-4">
+                        <label class="block text-sm text-gray-600 mb-2">คำถาม</label>
+                        <input type="text" name="Questions" placeholder="คำถามแบบทดสอบ..." required class="w-full bg-white border rounded-xl px-4 py-3 text-sm text-gray-800 placeholder-gray-600"/>
                     </div>
-                    <div class="grid grid-cols-2 gap-3 mb-3">
+                    <div class="grid grid-cols-2 gap-3 mb-4">
                         <div>
-                            <label class="block text-sm text-gray-500 mb-1.5">ตัวเลือก A</label>
-                            <input type="text" name="A" placeholder="ตัวเลือก A" class="w-full bg-white border rounded-lg px-4 py-2.5 text-sm text-black placeholder-gray-500 focus:outline-none" />
+                            <label class="block text-sm text-gray-600 mb-2">ตัวเลือก A</label>
+                            <input type="text" name="A" placeholder="ตัวเลือก A" required class="w-full bg-white border rounded-xl px-4 py-3 text-sm text-gray-800 placeholder-gray-600"/>
                         </div>
                         <div>
-                            <label class="block text-sm text-gray-500 mb-1.5">ตัวเลือก B</label>
-                            <input type="text" name="B" placeholder="ตัวเลือก B" class="w-full bg-white border rounded-lg px-4 py-2.5 text-sm text-black placeholder-gray-500 focus:outline-none" />
+                            <label class="block text-sm text-gray-600 mb-2">ตัวเลือก B</label>
+                            <input type="text" name="B" placeholder="ตัวเลือก B" required class="w-full bg-white border rounded-xl px-4 py-3 text-sm text-gray-800 placeholder-gray-600"/>
                         </div>
                         <div>
-                            <label class="block text-sm text-gray-500 mb-1.5">ตัวเลือก C</label>
-                            <input type="text" name="C" placeholder="ตัวเลือก C" class="w-full bg-white border rounded-lg px-4 py-2.5 text-sm text-black placeholder-gray-500 focus:outline-none" />
+                            <label class="block text-sm text-gray-600 mb-2">ตัวเลือก C</label>
+                            <input type="text" name="C" placeholder="ตัวเลือก C" required class="w-full bg-white border rounded-xl px-4 py-3 text-sm text-gray-800 placeholder-gray-600"/>
                         </div>
                         <div>
-                            <label class="block text-sm text-gray-500 mb-1.5">ตัวเลือก D</label>
-                            <input type="text" name="D" placeholder="ตัวเลือก D" class="w-full bg-white border rounded-lg px-4 py-2.5 text-sm text-black placeholder-gray-500 focus:outline-none" />
+                            <label class="block text-sm text-gray-600 mb-2">ตัวเลือก D</label>
+                            <input type="text" name="D" placeholder="ตัวเลือก D" required class="w-full bg-white border rounded-xl px-4 py-3 text-sm text-gray-800 placeholder-gray-600"/>
                         </div>
                     </div>
-                    <div>
-                        <label class="block text-sm text-gray-500 mb-1.5">เฉลย (A, B, C หรือ D)</label>
-                        <select name="Answer" class="w-32 bg-white border rounded-lg px-4 py-2.5 text-sm text-black focus:outline-none">
+                    <div class="mb-6">
+                        <label class="block text-sm text-gray-600 mb-2">เฉลย (A, B, C หรือ D)</label>
+                        <select name="Answer" class="w-32 bg-white border rounded-xl px-4 py-3 text-sm text-gray-800">
                             <option value="A">A</option>
                             <option value="B">B</option>
                             <option value="C">C</option>
@@ -56,10 +54,7 @@
                         </select>
                     </div>
                 </div>
-                <div class="flex gap-3">
-                    <button type="submit" class="bg-green-600 text-white px-5 py-2.5 rounded-lg text-sm">+ เพิ่มเนื้อหา</button>
-                    <a href="/instructor/edit/<%= courseId %>" class="px-5 py-2.5 text-sm text-gray-500 border rounded-lg">ยกเลิก</a>
-                </div>
+                <button type="submit" class="w-full bg-green-600 text-white px-4 py-3 rounded-xl text-sm">เพิ่มเนื้อหา</button>
             </form>
         </div>
     </div>

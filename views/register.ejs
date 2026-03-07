@@ -2,38 +2,40 @@
 <html lang="th">
 <head>
     <%- include('partials/head') %>
-    <title>สมัครสมาชิก - Codingo</title>
+    <title>สร้างบัญชี - Codingo</title>
 </head>
-<body class="bg-white min-h-screen flex items-center justify-center px-4">
-    <div class="w-full max-w-md">
-        <a href="/" class="text-sm text-gray-400 mb-6 inline-block">← ย้อนกลับ</a>
-        <div class="text-center mb-8">
-            <img src="/img/codingo_logo.png" class="h-16 mx-auto">
-            <p class="text-gray-500 mt-1 text-sm">ระบบจัดการเรียนรู้ทักษะการเขียนโปรแกรมคอมพิวเตอร์</p>
-        </div>
-        <div class="bg-white border shadow-md rounded-2xl p-8">
-            <h2 class="text-xl font-bold mb-6">สมัครสมาชิก</h2>
-            <% if (error) { %>
-                <div class="bg-red-50 border border-red-200 text-red-700 text-sm rounded-lg px-4 py-3 mb-5">
-                    <%= error %>
+<body class="bg-white">
+    <div class="flex items-center justify-center p-6 min-h-screen">
+        <div class="w-full max-w-md">
+            <a href="/" class="text-sm text-gray-600 mb-6 inline-block"><-- ย้อนกลับ</a>
+            <div class="text-center mb-8">
+                <img src="/img/codingo_logo.png" class="h-16 mx-auto">
+                <p class="text-gray-600 mt-1 text-sm">ระบบจัดการเรียนรู้ทักษะการเขียนโปรแกรมคอมพิวเตอร์</p>
+            </div>
+            <div class="bg-white border shadow-md rounded-2xl p-8">
+                <h2 class="text-xl text-gray-800 mb-6">สร้างบัญชี</h2>
+                <% if (error) { %>
+                <div class="bg-red-400 border border-red-600 text-red-800 text-sm rounded-xl px-4 py-3 mb-5">
+                <%= error %>
                 </div>
-            <% } %>
-            <form action="/register" method="POST">
-                <div class="mb-4">
-                    <label class="block text-sm text-gray-500 mb-2">ชื่อผู้ใช้</label>
-                    <input type="text" name="username" placeholder="ชื่อผู้ใช้ของคุณ" class="w-full bg-white border rounded-lg px-4 py-2 text-sm text-black placeholder-gray-500 focus:outline-none" required/>
-                </div>
-                <div class="mb-4">
-                    <label class="block text-sm text-gray-500 mb-2">อีเมล</label>
-                    <input type="email" name="email" placeholder="e.g. your@email.com" class="w-full bg-white border rounded-lg px-4 py-2 text-sm text-black placeholder-gray-500 focus:outline-none" required/>
-                </div>
-                <div class="mb-6">
-                    <label class="block text-sm text-gray-500 mb-2">รหัสผ่าน</label>
-                    <input type="password" name="password" placeholder="อย่างน้อย 6 ตัวอักษร" class="w-full bg-white border rounded-lg px-4 py-2 text-sm text-black placeholder-gray-500 focus:outline-none" required/>
-                </div>
-                <button type="submit" class="w-full bg-blue-500 text-white py-2 rounded-lg">สมัครสมาชิก</button>
-            </form>
-            <p class="text-center text-sm text-gray-500 mt-5">มีบัญชีแล้ว? <a href="/signin" class="text-blue-400 hover:underline">เข้าสู่ระบบ</a></p>
+                <% } %>
+                <form action="/register" method="POST">
+                    <div class="mb-4">
+                        <label class="block text-sm text-gray-600 mb-2">อีเมล</label>
+                        <input type="email" name="email" placeholder="name@email.com" required class="w-full bg-white border rounded-xl px-4 py-3 text-sm text-gray-800 placeholder-gray-600"/>
+                    </div>
+                    <div class="mb-4">
+                        <label class="block text-sm text-gray-600 mb-2">รหัสผ่าน</label>
+                        <input type="password" name="password" placeholder="**********" required class="w-full bg-white border rounded-xl px-4 py-3 text-sm text-gray-800 placeholder-gray-600"/>
+                    </div>
+                    <div class="mb-6">
+                        <label class="block text-sm text-gray-600 mb-2">ชื่อผู้ใช้</label>
+                        <input type="text" name="username" placeholder="username" required class="w-full bg-white border rounded-xl px-4 py-3 text-sm text-gray-800 placeholder-gray-600"/>
+                    </div>
+                    <button type="submit" class="w-full bg-blue-600 text-white text-sm px-4 py-3 rounded-xl">สร้างบัญชี</button>
+                </form>
+                <p class="text-center text-sm text-gray-600 mt-5">มีบัญชีแล้ว? <a href="/signin" class="text-blue-600">ลงชื่อเข้าใช้</a></p>
+            </div>
         </div>
     </div>
 </body>

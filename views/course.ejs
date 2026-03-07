@@ -2,29 +2,25 @@
 <html lang="th">
 <head>
     <%- include('partials/head') %>
-    <title>บทเรียน - Codingo</title>
+    <title>บทเรียนทั้งหมด - Codingo</title>
 </head>
-<body class="bg-white pt-16">
+<body class="bg-white">
     <%- include('partials/header') %>
-    <div class="max-w-6xl mx-auto px-6 py-10 min-h-screen">
-        <h1 class="text-3xl font-bold mb-1">บทเรียน</h1>
-        <p class="text-gray-500 mb-6">ค้นหาจากชื่อ หรือหมวดหมู่</p>
+    <div class="max-w-6xl mx-auto p-6 pt-24 min-h-screen">
+        <h1 class="text-3xl text-gray-800 mb-1">บทเรียนทั้งหมด</h1>
+        <p class="text-gray-600 mb-6">ค้นหาจากชื่อ หรือหมวดหมู่</p>
         <form class="flex gap-3 mb-8" action="/course" method="POST">
-            <input type="text" name="search" value="<%= search %>" placeholder="พิมพ์คำค้นหา" class="flex-1 bg-white border rounded-lg px-4 py-2.5 text-sm text-black placeholder-gray-500 focus:outline-none"/>
-            <button type="submit" class="bg-blue-500 text-white px-6 py-2 rounded-xl text-sm">ค้นหา</button>
+            <input type="text" name="search" value="<%= search %>" placeholder="พิมพ์คำค้นหา" class="flex-1 border rounded-xl px-4 py-3 text-sm text-gray-800 placeholder-gray-600"/>
+            <button type="submit" class="bg-blue-600 text-white px-4 py-3 rounded-xl text-sm">ค้นหา</button>
         </form>
-        <p class="text-sm text-gray-500 mb-4">พบบทเรียนทั้งหมด <%= courses.length %> บทเรียน</p>
+        <p class="text-sm text-gray-600 mb-4">พบบทเรียนทั้งหมด <%= courses.length %> บทเรียน</p>
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
             <% courses.forEach((item) => { %>
-                <a href="/course/<%= item.course_id %>" class="block bg-white border border-l-8 border-l-<%= item.color %>-500 rounded-xl shadow-md overflow-hidden">
-                    <div class="p-5">
-                        <h2 class="font-bold text-base text-black mb-1"><%= item.title %></h2>
-                        <div class="flex items-center justify-between my-2">
-                            <span class="text-xs px-2 py-1 rounded-full bg-gray-700 text-white"><%= item.catagory_name %></span>
-                        </div>
-                        <p class="text-sm text-gray-500 line-clamp-2"><%= item.description %></p>
-                    </div>
-                </a>
+            <a href="/course/<%= item.course_id %>" class="bg-white border border-l-8 border-l-<%= item.color %>-600 shadow-md rounded-xl p-6 overflow-hidden">
+                <span class="text-xs px-3 py-1 rounded-full bg-gray-800 text-white"><%= item.catagory_name %></span>
+                <h2 class="text-gray-800 mt-3 mb-1"><%= item.title %></h2>
+                <p class="text-sm text-gray-600 line-clamp-2"><%= item.description %></p>
+            </a>
             <% }); %>
         </div>
     </div>

@@ -1,7 +1,5 @@
-<div class="flex justify-between bg-white border-b px-6 py-3 fixed top-0 w-full">
-    <a href="/" class="flex items-center">
-        <img src="/img/codingo_logo.png" class="h-10 w-auto">
-    </a>
+<div class="bg-white flex justify-between border-b px-6 py-3 fixed top-0 w-full">
+    <a href="/" class="flex items-center"><img src="/img/codingo_logo.png" class="h-10 w-auto"></a>
     <div class="flex items-center gap-4">
         <a href="/course" class="text-gray-800 text-sm">บทเรียน</a>
         <% if (user) { %>
@@ -10,9 +8,9 @@
         <% if (user.role == "admin") { %>
         <a href="/instructor" class="text-gray-800 text-sm">จัดการบทเรียน</a>
         <% } %>
-        <a href="/profile" class="p-3 bg-gray-800 text-white text-xs rounded-xl"><%= user.username %></a>
+        <a href="/profile" class="flex items-center justify-center w-10 h-10 rounded-full bg-gray-800 text-white text-xs"><%= user.username.charAt(0).toUpperCase() %></a>
         <% } else { %>
-        <a href="/signin" class="p-3 bg-blue-500 text-white text-xs rounded-xl">เข้าสู่ระบบ</a>
+        <a href="/signin" class="px-4 py-3 bg-gray-800 text-white text-xs rounded-xl">เข้าสู่ระบบ</a>
         <% } %>
     </div>
 </div>
