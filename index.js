@@ -557,6 +557,29 @@ app.post("/instructor/delete/:courseId/:contentId", (req, res) => {
     });
 });
 
+app.get("/progression", (req, res) => {
+    if (!req.session.user) return res.redirect("/signin");
+    let accountId = req.session.user.account_id;
+
+    db.all(`SELECT Course.*, Catagory.catagory_name, Catagory.color
+            FROM Library
+            JOIN Course ON Library.course_id = Course.course_id
+            JOIN Catagory ON Course.catagory_id = Catagory.catagory_id
+            WHERE Library.account_id = ?`, [accountId], (_, courses) => {
+        if (!courses || courses.length == 0) {
+            return res.render("progression", { courses: [], contents: [], completedIds: [] });
+        }
+        let courseIds = courses.map(c => c.course_id);
+        let placeholders = courseIds.map(() => "?").join(",");
+        db.all(`SELECT * FROM Content WHERE course_id IN (${placeholders})`, courseIds, (_, contents) => {
+            db.all(`SELECT content_id FROM Progression WHERE account_id = ? AND completed = 1`, [accountId], (_, progRows) => {
+                let completedIds = (progRows || []).map(r => r.content_id);
+                res.render("progression", { courses: courses || [], contents: contents || [], completedIds });
+            });
+        });
+    });
+});
+
 app.listen(port, () => {
     console.log(`Codingo running on http://localhost:${port}`);
 });
