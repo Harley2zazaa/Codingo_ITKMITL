@@ -1,0 +1,18 @@
+<div class="flex justify-between bg-white border-b px-6 py-3 fixed top-0 w-full">
+    <a href="/" class="flex items-center">
+        <img src="/img/codingo_logo.png" class="h-10 w-auto">
+    </a>
+    <div class="flex items-center gap-4">
+        <a href="/course" class="text-gray-800 text-sm">บทเรียน</a>
+        <% if (user) { %>
+        <a href="/library" class="text-gray-800 text-sm">คลัง</a>
+        <a href="/leaderboard" class="text-gray-800 text-sm">อันดับ</a>
+        <% if (user.role == "admin") { %>
+        <a href="/instructor" class="text-gray-800 text-sm">จัดการบทเรียน</a>
+        <% } %>
+        <a href="/profile" class="p-3 bg-gray-800 text-white text-xs rounded-xl"><%= user.username %></a>
+        <% } else { %>
+        <a href="/signin" class="p-3 bg-blue-500 text-white text-xs rounded-xl">เข้าสู่ระบบ</a>
+        <% } %>
+    </div>
+</div>

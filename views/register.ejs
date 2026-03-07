@@ -13,6 +13,11 @@
         </div>
         <div class="bg-white border shadow-md rounded-2xl p-8">
             <h2 class="text-xl font-bold mb-6">สมัครสมาชิก</h2>
+            <% if (error) { %>
+                <div class="bg-red-50 border border-red-200 text-red-700 text-sm rounded-lg px-4 py-3 mb-5">
+                    <%= error %>
+                </div>
+            <% } %>
             <form action="/register" method="POST">
                 <div class="mb-4">
                     <label class="block text-sm text-gray-500 mb-2">ชื่อผู้ใช้</label>
@@ -28,7 +33,7 @@
                 </div>
                 <button type="submit" class="w-full bg-blue-500 text-white py-2 rounded-lg">สมัครสมาชิก</button>
             </form>
-            <p class="text-center text-sm text-gray-500 mt-5">มีบัญชีแล้ว? <a href="/login" class="text-blue-400 hover:underline">เข้าสู่ระบบ</a></p>
+            <p class="text-center text-sm text-gray-500 mt-5">มีบัญชีแล้ว? <a href="/signin" class="text-blue-400 hover:underline">เข้าสู่ระบบ</a></p>
         </div>
     </div>
 </body>

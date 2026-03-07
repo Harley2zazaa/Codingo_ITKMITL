@@ -1,28 +1,22 @@
 const express = require("express");
+const session = require("express-session");
+const app = express();
 const path = require("path");
 const sqlite3 = require("sqlite3").verbose();
-const session = require("express-session");
-
-const app = express();
 const port = 3000;
 
 let db = new sqlite3.Database("codingo.db", (err) => {
-    if (err) {
-        return console.error(err.message);
-    }
-    console.log("Connected to codingo.db");
+    if (err) throw err;
+    console.log("Connected to the codingo database");
 });
 
 app.use(express.static("public"));
 app.use(express.urlencoded({ extended: true }));
-app.set("view engine", "ejs");
-app.set("views", path.join(__dirname, "views"));
 
 app.use(session({
     secret: "codingo_secret",
     resave: false,
     saveUninitialized: false,
-    cookie: { maxAge: 1000 * 60 * 60 * 24 }
 }));
 
 app.use((req, res, next) => {
@@ -30,22 +24,36 @@ app.use((req, res, next) => {
     next();
 });
 
-function requireLogin(req, res, next) {
-    if (!req.session.user) {
-        return res.redirect("/login");
-    }
-    next();
-}
-
-function requireAdmin(req, res, next) {
-    if (!req.session.user || req.session.user.role != "admin") {
-        return res.redirect("/");
-    }
-    next();
-}
+app.set("view engine", "ejs");
+app.set("views", path.join(__dirname, "views"));
 
 app.get("/", (req, res) => {
+    res.redirect("/home")
+});
+
+app.get("/home", (req, res) => {
     res.render("home");
+});
+
+app.get("/signin", (req, res) => {
+    if (req.session.user) {
+        return res.redirect("/home");
+    }
+    res.render("signin", { error: null });
+});
+
+app.post("/signin", (req, res) => {
+    let { identifier, password } = req.body;
+    let sql1 = `SELECT *
+                FROM Account
+                WHERE (email = ? OR username = ?) AND password = ?`;
+    db.get(sql1, [identifier, identifier, password], (_, user) => {
+        if (!user) {
+            return res.render("signin", { error: "อีเมล ชื่อผู้ใช้ หรือรหัสผ่านไม่ถูกต้อง" });
+        }
+        req.session.user = user;
+        res.redirect("/home");
+    });
 });
 
 app.get("/register", (req, res) => {
@@ -53,338 +61,521 @@ app.get("/register", (req, res) => {
 });
 
 app.post("/register", (req, res) => {
-    const { username, email, password } = req.body;
+    let { username, email, password } = req.body;
     if (!username || !email || !password) {
-        return res.render("register", { error: "ข้อมูลไม่ถูกต้อง" });
+        return res.render("register", { error: "กรุณากรอกข้อมูลให้ครบ" });
     }
-    db.get("SELECT account_id FROM Account WHERE email = ?", [email], (err, row) => {
-        if (row) {
-            return res.render("register", { error: "บัญชีนี้มีอยู่แล้วในระบบ" });
+    let sql1 = `SELECT *
+                FROM Account
+                WHERE email = ? OR username = ?`;
+    db.get(sql1, [email, username], (_, existing) => {
+        if (existing) {
+            return res.render("register", { error: "ชื่อผู้ใช้หรืออีเมลนี้มีในระบบแล้ว" });
         }
-        db.run("INSERT INTO Account (username, email, password, role, score) VALUES (?, ?, ?, 'student', 0)", [username, email, password], function (err) {
+        let sql2 = `INSERT INTO Account (username, email, password) VALUES
+                    (?, ?, ?)`;
+        db.run(sql2, [username, email, password], (err) => {
             if (err) {
-                return res.render("register", { error: "เกิดข้อผิดพลาด กรุณาลองใหม่" });
+                return res.render("register", { error: "เกิดข้อผิดพลาด" });
             }
-            db.get("SELECT * FROM Account WHERE account_id = ?", [this.lastID], (err, user) => {
-                req.session.user = { id: user.account_id, username: user.username, email: user.email, role: user.role, score: user.score };
-                res.redirect("/");
+            let newAccountId = this.lastID;
+            let sql3 = `INSERT INTO Gamificate (account_id, xp, last_active, level, streak) VALUES
+                        (?, 0, DATE('now'), 0, 0)`;
+            db.run(sql3, [newAccountId], (_) => {
+                let sql4 = `SELECT * FROM Account WHERE account_id = ?`;
+                db.get(sql4, [newAccountId], (_, user) => {
+                    req.session.user = user;
+                    res.redirect("/home");
+                });
             });
         });
     });
 });
 
-app.get("/login", (req, res) => {
-    res.render("login", { error: null });
-});
-
-app.post("/login", (req, res) => {
-    const { identifier, password } = req.body;
-    if (!identifier || !password) {
-        return res.render("login", { error: "กรุณากรอกข้อมูลให้ครบ" });
-    }
-    db.get("SELECT * FROM Account WHERE email = ? OR username = ?", [identifier, identifier], (err, user) => {
-        if (err || !user || password != user.password) {
-            return res.render("login", { error: "อีเมล ชื่อผู้ใช้ หรือรหัสผ่านไม่ถูกต้อง" });
-        }
-        req.session.user = { id: user.account_id, username: user.username, email: user.email, role: user.role, score: user.score };
-        res.redirect("/");
-    });
-});
-
-app.get("/logout", (req, res) => {
+app.get("/signout", (req, res) => {
     req.session.destroy();
-    res.redirect("/login");
+    res.redirect("/home");
 });
 
-app.get("/search", (req, res) => {
-    const keyword = (req.query.q || "").trim();
-    const allQuery = `SELECT c.course_id AS id, c.title, c.description, cat.catagory_name AS category, cat.color, (SELECT COUNT(*) FROM Course_Content WHERE course_id = c.course_id) AS content_count
-                        FROM Course c
-                        LEFT JOIN Catagory cat ON c.catagory_id = cat.catagory_id
-                        ORDER BY c.course_id DESC`;
-    if (!keyword) {
-        return db.all(allQuery, (err, allRows) => {
-            res.render("search", { course: [], allCourses: allRows || [], keyword: "", notFound: false });
-        });
-    }
-    const like = `%${keyword}%`;
-    const query = `SELECT c.course_id AS id, c.title, c.description, cat.catagory_name AS category, cat.color, (SELECT COUNT(*) FROM Course_Content WHERE course_id = c.course_id) AS content_count
-                    FROM Course c
-                    LEFT JOIN Catagory cat ON c.catagory_id = cat.catagory_id
-                    WHERE c.title LIKE ? OR cat.catagory_name LIKE ?
-                    ORDER BY c.course_id DESC`;
-    db.all(query, [like, like], (err, rows) => {
-        if (err) {
-            console.log(err.message);
-        }
-        db.all(allQuery, (err2, allRows) => {
-            res.render("search", { course: rows || [], allCourses: allRows || [], keyword, notFound: !rows || rows.length == 0 });
-        });
+app.get("/course", (req, res) => {
+    let sql1 = `SELECT Course.*, Catagory.catagory_name, Catagory.color
+                FROM Course
+                JOIN Catagory
+                ON Course.catagory_id = Catagory.catagory_id`;
+    db.all(sql1, (_, courses) => {
+        res.render("course", { courses: courses || [], search: "" });
     });
 });
 
-app.get("/course/:id", (req, res) => {
-    const courseId = req.params.id;
-    const userId = req.session.user ? req.session.user.id : null;
-    const msg = req.query.msg || null;
-    db.get(`SELECT c.course_id AS id, c.title, c.description, cat.catagory_name AS category, cat.color, 'Admin' AS author
-            FROM Course c
-            LEFT JOIN Catagory cat ON c.catagory_id = cat.catagory_id
-            WHERE c.course_id = ?`, [courseId], (err, course) => {
-        if (err || !course) {
-            return res.redirect("/");
+app.post("/course", (req, res) => {
+    let search = req.body.search || "";
+    let sql1 = `SELECT Course.*, Catagory.catagory_name, Catagory.color
+                FROM Course
+                JOIN Catagory
+                ON Course.catagory_id = Catagory.catagory_id
+                WHERE Course.title LIKE ? OR Catagory.catagory_name LIKE ?`;
+    db.all(sql1, [`%${search}%`, `%${search}%`], (_, courses) => {
+        res.render("course", { courses: courses || [], search });
+    });
+});
+
+app.get("/course/:courseId", (req, res) => {
+    let courseId = req.params.courseId;
+    let sql1 = `SELECT Course.*, Catagory.catagory_name, Catagory.color
+                FROM Course
+                JOIN Catagory
+                ON Course.catagory_id = Catagory.catagory_id
+                WHERE Course.course_id = ?`
+    db.get(sql1, [courseId], (_, course) => {
+        if (!course) {
+            return res.redirect("/course");
         }
-        db.all(`SELECT content_id AS id, course_id, topic AS title, content AS body, Questions, A, B, C, D, Answer FROM Course_Content WHERE course_id = ? ORDER BY content_id`, [courseId], (err, contents) => {
-            if (!userId) {
-                return res.render("course", { course, contents: contents || [], inLibrary: false, completedIds: [], msg });
+        let sql2 = `SELECT *
+                    FROM Content
+                    WHERE course_id = ?`;
+        db.all(sql2, [courseId], (_, contents) => {
+            let inLibrary = false;
+            if (req.session.user) {
+                let sql3 = `SELECT *
+                            FROM Library
+                            WHERE account_id = ? AND course_id = ?`;
+                db.get(sql3, [req.session.user.account_id, courseId], (_, lib) => {
+                    inLibrary = !!lib;
+                    if (inLibrary) {
+                        res.redirect(`/library/${courseId}`);
+                    }
+                    else {
+                        res.render("content", { course, contents: contents || [], inLibrary, activeContent: null, result: null, completedIds: [] });
+                    }
+                });
             }
-            db.get("SELECT storage_id FROM Account_Library WHERE account_id = ? AND course_id = ?", [userId, courseId], (err, libRow) => {
-                db.all("SELECT content_id FROM Progression WHERE account_id = ? AND course_id = ? AND completed = 1", [userId, courseId], (err, progRows) => {
+            else {
+                res.render("content", { course, contents: contents || [], inLibrary, activeContent: null, result: null, completedIds: [] });
+            }
+        });
+    });
+});
+
+app.post("/course/add/:courseId", (req, res) => {
+    if (!req.session.user) {
+        return res.redirect("/signin");
+    }
+    let courseId = req.params.courseId;
+    let sql1 = `SELECT *
+                FROM Library
+                WHERE account_id = ? AND course_id = ?`;
+    db.get(sql1, [req.session.user.account_id, courseId], (_, existing) => {
+        if (!existing) {
+            let sql2 = `INSERT INTO Library (account_id, course_id) VALUES
+                        (?, ?)`;
+            db.run(sql2, [req.session.user.account_id, courseId], (_) => {
+                res.redirect(`/library/${courseId}`);
+            });
+        }
+    });
+});
+
+app.get("/library", (req, res) => {
+    if (!req.session.user) {
+        return res.redirect("/signin");
+    }
+    let sql1 = `SELECT Course.*, Catagory.catagory_name, Catagory.color,
+                (SELECT COUNT(*) FROM Content WHERE Content.course_id = Course.course_id) as total,
+                (SELECT COUNT(*) FROM Progression WHERE Progression.course_id = Course.course_id AND Progression.account_id = ? AND Progression.completed = 1) as done
+                FROM Library
+                JOIN Course
+                ON Library.course_id = Course.course_id
+                JOIN Catagory
+                ON Course.catagory_id = Catagory.catagory_id
+                WHERE Library.account_id = ?`
+    db.all(sql1, [req.session.user.account_id, req.session.user.account_id], (_, courses) => {
+        res.render("library", { courses: courses || [] });
+    });
+});
+
+app.get("/library/:courseId", (req, res) => {
+    if (!req.session.user) {
+        return res.redirect("/signin");
+    }
+    let courseId = req.params.courseId;
+    let contentId = req.query.content;
+    let sql1 = `SELECT * FROM Library WHERE account_id = ? AND course_id = ?`;
+    db.get(sql1, [req.session.user.account_id, courseId], (_, lib) => {
+        if (!lib) {
+            return res.redirect(`/course/${courseId}`);
+        }
+        let sql2 = `SELECT Course.*, Catagory.catagory_name, Catagory.color
+                    FROM Course JOIN Catagory ON Course.catagory_id = Catagory.catagory_id
+                    WHERE Course.course_id = ?`
+        db.get(sql2, [courseId], (_, course) => {
+            let sql3 = `SELECT *
+                    FROM Content
+                    WHERE course_id = ?`;
+            db.all(sql3, [courseId], (_, contents) => {
+                let sql4 = `SELECT content_id
+                        FROM Progression
+                        WHERE account_id = ? AND course_id = ? AND completed = 1`;
+                db.all(sql4, [req.session.user.account_id, courseId], (_, progRows) => {
                     const completedIds = (progRows || []).map(r => r.content_id);
-                    res.render("course", { course, contents: contents || [], inLibrary: !!libRow, completedIds, msg });
+                    let activeContent = null;
+                    if (contentId) {
+                        activeContent = contents.find(c => c.content_id == contentId) || null;
+                    }
+                    res.render("content", { course, contents: contents || [], inLibrary: true, activeContent, result: null, completedIds
+                    });
                 });
             });
         });
     });
 });
 
-app.get("/library", requireLogin, (req, res) => {
-    const userId = req.session.user.id;
-    const query = `SELECT c.course_id AS id, c.title, c.description, cat.catagory_name AS category, cat.color, (SELECT COUNT(*) FROM Course_Content WHERE course_id = c.course_id) AS content_count, (SELECT COUNT(*) FROM Progression WHERE account_id = ? AND course_id = c.course_id AND completed = 1) AS done
-                    FROM Account_Library al
-                    JOIN Course c ON al.course_id = c.course_id
-                    LEFT JOIN Catagory cat ON c.catagory_id = cat.catagory_id
-                    WHERE al.account_id = ?
-                    ORDER BY al.storage_id DESC`;
-    db.all(query, [userId, userId], (err, rows) => {
-        if (err) {
-            console.log(err.message);
-        }
-        res.render("library", { course: rows || [], empty: !rows || rows.length == 0 });
+app.post("/library/remove/:courseId", (req, res) => {
+    if (!req.session.user) {
+        return res.redirect("/signin");
+    }
+    let sql1 = `DELETE FROM Library
+                WHERE account_id = ?
+                AND course_id = ?`;
+    db.run(sql1, [req.session.user.account_id, req.params.courseId], () => {
+        res.redirect("/library");
     });
 });
 
-app.post("/library/add/:courseId", requireLogin, (req, res) => {
-    const userId = req.session.user.id;
-    const courseId = req.params.courseId;
-    db.get("SELECT storage_id FROM Account_Library WHERE account_id = ? AND course_id = ?", [userId, courseId], (err, row) => {
-        if (row) {
-            return res.redirect(`/course/${courseId}?msg=already`);
-        }
-        db.run("INSERT INTO Account_Library (account_id, course_id) VALUES (?, ?)", [userId, courseId], () => {
-            res.redirect(`/course/${courseId}?msg=added`);
-        });
-    });
-});
-
-app.post("/library/remove/:courseId", requireLogin, (req, res) => {
-    const userId = req.session.user.id;
-    const courseId = req.params.courseId;
-    db.run("DELETE FROM Account_Library WHERE account_id = ? AND course_id = ?", [userId, courseId], () => {
-        res.redirect(`/course/${courseId}?msg=removed`);
-    });
-});
-
-app.post("/progress/complete/:contentId", requireLogin, (req, res) => {
-    const userId = req.session.user.id;
-    const contentId = req.params.contentId;
-    db.get("SELECT course_id FROM Course_Content WHERE content_id = ?", [contentId], (err, row) => {
-        if (err || !row) {
-            return res.redirect("/library");
-        }
-        const courseId = row.course_id;
-        db.get("SELECT progress_id FROM Progression WHERE account_id = ? AND content_id = ?", [userId, contentId], (err, existing) => {
-            if (existing) return res.redirect(`/course/${courseId}?msg=completed`);
-            db.run("INSERT INTO Progression (account_id, course_id, content_id, completed) VALUES (?, ?, ?, 1)", [userId, courseId, contentId], () => {
-                db.run("UPDATE Account SET score = score + 20 WHERE account_id = ?", [userId], () => {
-                    req.session.user.score += 20;
-                    res.redirect(`/course/${courseId}?msg=completed`);
+app.post("/library/:courseId/:contentId", (req, res) => {
+    if (!req.session.user) {
+        return res.redirect("/signin");
+    }
+    let { courseId, contentId } = req.params;
+    let { answer } = req.body;
+    let sql1 = `SELECT *
+                FROM Content
+                WHERE content_id = ?`;
+    db.get(sql1, [contentId], (_, content) => {
+        let correct = content && answer == content.Answer;
+        let sql2 = `SELECT *
+                    FROM Progression
+                    WHERE account_id = ? AND course_id = ? AND content_id = ?`;
+        db.get(sql2, [req.session.user.account_id, courseId, contentId], (_, existing) => {
+            const finish = () => {
+                let sql3 = `SELECT Course.*, Catagory.catagory_name, Catagory.color
+                            FROM Course JOIN Catagory ON Course.catagory_id = Catagory.catagory_id
+                            WHERE Course.course_id = ?`;
+                db.get(sql3, [courseId], (_, course) => {
+                    let sql4 = `SELECT *
+                                FROM Content
+                                WHERE course_id = ?`;
+                    db.all(sql4, [courseId], (_, contents) => {
+                        let sql5 = `SELECT content_id
+                                    FROM Progression
+                                    WHERE account_id = ? AND course_id = ? AND completed = 1`;
+                        db.all(sql5, [req.session.user.account_id, courseId], (_, progRows) => {
+                            const completedIds = (progRows || []).map(r => r.content_id);
+                            res.render("content", {
+                                course, contents: contents || [], inLibrary: true,
+                                activeContent: content, result: correct ? "correct" : "wrong",
+                                completedIds
+                            });
+                        });
+                    });
                 });
-            });
+            };
+            if (correct && !existing) {
+                let sql6 = `INSERT INTO Progression (account_id, course_id, content_id, completed) VALUES
+                            (?, ?, ?, 1)`;
+                db.run(sql6, [req.session.user.account_id, courseId, contentId], (_) => {
+                    let sql7 = `UPDATE Gamificate
+                                SET xp = xp + 10,
+                                last_active = DATE('now'),
+                                level = (xp + 10) / 50
+                                WHERE account_id = ?`;
+                    db.run(sql7, [req.session.user.account_id], (_) => {
+                        let sql8 = `SELECT *
+                                    FROM Account
+                                    WHERE account_id = ?`;
+                        db.get(sql8, [req.session.user.account_id], (_, updUser) => {
+                            req.session.user = updUser;
+                            finish();
+                        });
+                    });
+                });
+            }
+            else {
+                finish();
+            }
         });
     });
 });
 
 app.get("/leaderboard", (req, res) => {
-    const query = `SELECT account_id AS id, username, score, (SELECT COUNT(*) FROM Account_Library WHERE account_id = Account.account_id) AS course_count
+    if (!req.session.user) {
+        return res.redirect("/signin");
+    }
+    let sql1 = `SELECT Account.*, 
+                (SELECT COUNT(*) FROM Library WHERE Library.account_id = Account.account_id) as lib_count,
+                COALESCE(Gamificate.xp, 0) as xp,
+                COALESCE(Gamificate.level, 0) as level,
+                COALESCE(Gamificate.streak, 0) as streak
+                FROM Account
+                LEFT JOIN Gamificate ON Account.account_id = Gamificate.account_id
+                WHERE Account.role = "student"
+                ORDER BY xp DESC
+                LIMIT 10`;
+    db.all(sql1, (_, accounts) => {
+        res.render("leaderboard", { accounts: accounts || [] });
+    });
+});
+
+app.get("/profile", (req, res) => {
+    if (!req.session.user) {
+        return res.redirect("/signin");
+    }
+    let sql1 = `SELECT *
+                FROM Account
+                WHERE account_id = ?`;
+    db.get(sql1, [req.session.user.account_id], (_, user) => {
+        let sql2 = `SELECT * FROM Gamificate WHERE account_id = ?`;
+        db.get(sql2, [req.session.user.account_id], (_, gamificate) => {
+            res.render("profile", { profileUser: user, gamificate: gamificate || null, error: null, success: null });
+        });
+    });
+});
+
+app.post("/profile", (req, res) => {
+    if (!req.session.user) {
+        return res.redirect("/signin");
+    }
+    let { username, email, password } = req.body;
+    if (!username || !email || !password) {
+        let sql1 = `SELECT *
                     FROM Account
-                    WHERE role = 'student'
-                    ORDER BY score DESC
-                    LIMIT 10`;
-    db.all(query, (err, rows) => {
-        if (err) {
-            console.log(err.message);
-        }
-        res.render("leaderboard", { board: rows || [], empty: !rows || rows.length == 0 });
-    });
-});
-
-app.get("/profile", requireLogin, (req, res) => {
-    db.get("SELECT account_id AS id, username, email, role, score FROM Account WHERE account_id = ?", [req.session.user.id], (err, user) => {
-        if (err) {
-            console.log(err.message);
-        }
-        res.render("profile", { userData: user, error: null, success: null });
-    });
-});
-
-app.post("/profile", requireLogin, (req, res) => {
-    const { username, email } = req.body;
-    if (!username || username.trim() == "" || !email || email.trim() == "") {
-        db.get("SELECT account_id AS id, username, email, role, score FROM Account WHERE account_id = ?", [req.session.user.id], (err, user) => {
-            res.render("profile", { userData: user, error: "ข้อมูลใหม่ไม่ตรงตามเงื่อนไข", success: null });
-        });
-        return;
-    }
-    db.run("UPDATE Account SET username = ?, email = ? WHERE account_id = ?", [username.trim(), email.trim(), req.session.user.id], () => {
-        req.session.user.username = username.trim();
-        db.get("SELECT account_id AS id, username, email, role, score FROM Account WHERE account_id = ?", [req.session.user.id], (err, user) => {
-            res.render("profile", { userData: user, error: null, success: "บันทึกข้อมูลเรียบร้อยแล้ว" });
-        });
-    });
-});
-
-app.get("/admin", requireAdmin, (req, res) => {
-    const query = `SELECT c.course_id AS id, c.title, c.description, cat.catagory_name AS category, cat.color, (SELECT COUNT(*) FROM Course_Content WHERE course_id = c.course_id) AS content_count
-                    FROM Course c
-                    LEFT JOIN Catagory cat ON c.catagory_id = cat.catagory_id
-                    ORDER BY c.course_id DESC`;
-    db.all(query, (err, rows) => {
-        if (err) {
-            console.log(err.message);
-        }
-        res.render("admin", { course: rows || [], msg: req.query.msg || null });
-    });
-});
-
-app.get("/admin/add", requireAdmin, (req, res) => {
-    db.all("SELECT * FROM Catagory ORDER BY catagory_id", (err, categories) => {
-        res.render("admin_form", { course: null, error: null, categories: categories || [] });
-    });
-});
-
-app.post("/admin/add", requireAdmin, (req, res) => {
-    const { title, description, catagory_id } = req.body;
-    if (!title || !description) {
-        return db.all("SELECT * FROM Catagory ORDER BY catagory_id", (err, categories) => {
-            res.render("admin_form", { course: null, error: "ข้อมูลที่ต้องการยังไม่ครบถ้วน", categories: categories || [] });
-        });
-    }
-    db.run("INSERT INTO Course (title, description, catagory_id) VALUES (?, ?, ?)", [title, description, catagory_id || null], () => {
-        res.redirect("/admin?msg=added");
-    });
-});
-
-app.get("/admin/edit/course/:id", requireAdmin, (req, res) => {
-    db.get("SELECT course_id AS id, title, description, catagory_id FROM Course WHERE course_id = ?", [req.params.id], (err, course) => {
-        if (err || !course) {
-            return res.redirect("/admin");
-        }
-        db.all("SELECT * FROM Catagory ORDER BY catagory_id", (err, categories) => {
-            res.render("admin_form", { course, error: null, categories: categories || [] });
-        });
-    });
-});
-
-app.post("/admin/edit/course/:id", requireAdmin, (req, res) => {
-    const { title, description, catagory_id } = req.body;
-    if (!title || !description) {
-        db.get("SELECT course_id AS id, title, description, catagory_id FROM Course WHERE course_id = ?", [req.params.id], (err, course) => {
-            db.all("SELECT * FROM Catagory ORDER BY catagory_id", (err2, categories) => {
-                res.render("admin_form", { course, error: "ข้อมูลที่ต้องการยังไม่ครบถ้วน", categories: categories || [] });
+                    WHERE account_id = ?`;
+        return db.get(sql1, [req.session.user.account_id], (_, user) => {
+            let sql2 = `SELECT *
+                        FROM Gamificate
+                        WHERE account_id = ?`;
+            db.get(sql2, [req.session.user.account_id], (_, gamificate) => {
+                res.render("profile", { profileUser: user, gamificate: gamificate || null, error: "กรุณากรอกข้อมูลให้ครบ", success: null });
             });
         });
-        return;
     }
-    db.run("UPDATE Course SET title = ?, description = ?, catagory_id = ? WHERE course_id = ?", [title, description, catagory_id || null, req.params.id], () => {
-        res.redirect("/admin?msg=edited");
+    let sql3 = `UPDATE Account
+                SET username = ?, email = ?, password = ?
+                WHERE account_id = ?`;
+    db.run(sql3, [username, email, password, req.session.user.account_id], (_) => {
+        let sql4 = `SELECT *
+                    FROM Account
+                    WHERE account_id = ?`;
+        db.get(sql4, [req.session.user.account_id], (_, user) => {
+            req.session.user = user;
+            let sql5 = `SELECT *
+                        FROM Gamificate
+                        WHERE account_id = ?`;
+            db.get(sql5, [req.session.user.account_id], (_, gamificate) => {
+                res.render("profile", { profileUser: user, gamificate: gamificate || null, error: null, success: "บันทึกข้อมูลเรียบร้อย" });
+            });
+        });
     });
 });
 
-app.post("/admin/delete/course/:id", requireAdmin, (req, res) => {
-    const courseId = req.params.id;
-    db.run("DELETE FROM Progression WHERE course_id = ?", [courseId], () => {
-        db.run("DELETE FROM Account_Library WHERE course_id = ?", [courseId], () => {
-            db.run("DELETE FROM Course_Content WHERE course_id = ?", [courseId], () => {
-                db.run("DELETE FROM Course WHERE course_id = ?", [courseId], () => {
-                    res.redirect("/admin?msg=deleted");
+app.get("/instructor", (req, res) => {
+    if (!req.session.user) {
+        return res.redirect("/signin");
+    }
+    if (req.session.user.role !== "admin") {
+        return res.redirect("/home");
+    }
+    let sql1 = `SELECT Course.*, Catagory.catagory_name,
+                (SELECT COUNT(*) FROM Content WHERE Content.course_id = Course.course_id) as content_count
+                FROM Course
+                JOIN Catagory
+                ON Course.catagory_id = Catagory.catagory_id`;
+    db.all(sql1, (_, courses) => {
+        res.render("instructor", { courses: courses || [] });
+    });
+});
+
+app.get("/instructor/create", (req, res) => {
+    if (!req.session.user) {
+        return res.redirect("/signin");
+    }
+    if (req.session.user.role !== "admin") {
+        return res.redirect("/home");
+    }
+    let sql1 = `SELECT *
+                FROM Catagory`;
+    db.all(sql1, (_, categories) => {
+        res.render("instructor_create_course", { categories: categories || [], error: null });
+    });
+});
+
+app.post("/instructor/create", (req, res) => {
+    if (!req.session.user) {
+        return res.redirect("/signin");
+    }
+    if (req.session.user.role !== "admin") {
+        return res.redirect("/home");
+    }
+    let { title, description, catagory_id } = req.body;
+    let sql1 = `INSERT INTO Course (title, description, catagory_id) VALUES
+                (?, ?, ?)`;
+    db.run(sql1, [title, description, catagory_id], (_) => {
+        res.redirect("/instructor");
+    });
+});
+
+app.get("/instructor/edit/:courseId", (req, res) => {
+    if (!req.session.user) {
+        return res.redirect("/signin");
+    }
+    if (req.session.user.role !== "admin") {
+        return res.redirect("/home");
+    }
+    let courseId = req.params.courseId;
+    let sql1 = `SELECT *
+                FROM Course
+                WHERE course_id = ?`;
+    db.get(sql1, [courseId], (_, course) => {
+        if (!course) {
+            return res.redirect("/instructor");
+        }
+        let sql2 = `SELECT *
+                    FROM Content
+                    WHERE course_id = ?`;
+        db.all(sql2, [courseId], (_, contents) => {
+            let sql3 = `SELECT *
+                        FROM Catagory`;
+            db.all(sql3, (_, categories) => {
+                res.render("instructor_edit_course", { course, contents: contents || [], categories: categories || [], error: null });
+            });
+        });
+    });
+});
+
+app.post("/instructor/edit/:courseId", (req, res) => {
+    if (!req.session.user) {
+        return res.redirect("/signin");
+    }
+    if (req.session.user.role !== "admin") {
+        return res.redirect("/home");
+    }
+    let courseId = req.params.courseId;
+    let { title, description, catagory_id } = req.body;
+    let sql1 = `UPDATE Course
+                SET title = ?, description = ?, catagory_id = ?
+                WHERE course_id = ?`;
+    db.run(sql1, [title, description, catagory_id, courseId], (_) => {
+        res.redirect(`/instructor/edit/${courseId}`);
+    });
+});
+
+app.post("/instructor/delete/:courseId", (req, res) => {
+    if (!req.session.user) {
+        return res.redirect("/signin");
+    }
+    if (req.session.user.role !== "admin") {
+        return res.redirect("/home");
+    }
+    let courseId = req.params.courseId;
+    let sql1 = `DELETE FROM Content
+                WHERE course_id = ?`;
+    db.run(sql1, [courseId], (_) => {
+        let sql2 = `DELETE FROM Library
+                    WHERE course_id = ?`;
+        db.run(sql2, [courseId], (_) => {
+            let sql3 = `DELETE FROM Progression
+                        WHERE course_id = ?`;
+            db.run(sql3, [courseId], (_) => {
+                let sql4 = `DELETE FROM Course
+                            WHERE course_id = ?`;
+                db.run(sql4, [courseId], (_) => {
+                    res.redirect("/instructor");
                 });
             });
         });
     });
 });
 
-app.get("/admin/edit/course/:id/content", requireAdmin, (req, res) => {
-    db.get(`SELECT c.course_id AS id, c.title, c.description, cat.catagory_name AS category, cat.color
-            FROM Course c
-            LEFT JOIN Catagory cat ON c.catagory_id = cat.catagory_id
-            WHERE c.course_id = ?`, [req.params.id], (err, course) => {
-        if (err || !course) {
-            return res.redirect("/admin");
-        }
-        db.all(`SELECT content_id AS id, course_id, topic AS title, content AS body, Questions, A, B, C, D, Answer
-                FROM Course_Content WHERE course_id = ? ORDER BY content_id`, [req.params.id], (err, rows) => {
-            res.render("admin_contents", { course, contents: rows || [], msg: req.query.msg || null });
-        });
-    });
-});
-
-app.post("/admin/add/course/:id/content", requireAdmin, (req, res) => {
-    const { title, body, Questions, A, B, C, D, Answer } = req.body;
-    if (!title) {
-        return res.redirect(`/admin/edit/course/${req.params.id}/content?msg=error`);
+app.get("/instructor/create/:courseId", (req, res) => {
+    if (!req.session.user) {
+        return res.redirect("/signin");
     }
-    db.run("INSERT INTO Course_Content (course_id, topic, content, Questions, A, B, C, D, Answer) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)", [req.params.id, title, body || "", Questions || "", A || "", B || "", C || "", D || "", Answer || ""], () => {
-        res.redirect(`/admin/edit/course/${req.params.id}/content?msg=added`);
+    if (req.session.user.role !== "admin") {
+        return res.redirect("/home");
+    }
+    res.render("instructor_create_content", { courseId: req.params.courseId, error: null });
+});
+
+app.post("/instructor/create/:courseId", (req, res) => {
+    if (!req.session.user) {
+        return res.redirect("/signin");
+    }
+    if (req.session.user.role !== "admin") {
+        return res.redirect("/home");
+    }
+    let courseId = req.params.courseId;
+    let { topic, content, Questions, A, B, C, D, Answer } = req.body;
+    let sql1 = `INSERT INTO Content (course_id, topic, content, Questions, A, B, C, D, Answer) VALUES
+                (?, ?, ?, ?, ?, ?, ?, ?, ?)`;
+    db.run(sql1, [courseId, topic, content, Questions, A, B, C, D, Answer], (_) => {
+        res.redirect(`/instructor/edit/${courseId}`);
     });
 });
 
-app.get("/admin/edit/course/:id/content/:cid", requireAdmin, (req, res) => {
-    db.get(`SELECT content_id AS id, course_id, topic AS title, content AS body, Questions, A, B, C, D, Answer
-            FROM Course_Content WHERE content_id = ?`, [req.params.cid], (err, content) => {
-        if (err || !content) {
-            return res.redirect(`/admin/edit/course/${req.params.id}/content`);
+app.get("/instructor/edit/:courseId/:contentId", (req, res) => {
+    if (!req.session.user) {
+        return res.redirect("/signin");
+    }
+    if (req.session.user.role !== "admin") {
+        return res.redirect("/home");
+    }
+    let contentId = req.params.contentId;
+    let sql1 = `SELECT *
+                FROM Content
+                WHERE content_id = ?`;
+    db.get(sql1, [contentId], (_, content) => {
+        if (!content) {
+            return res.redirect(`/instructor/edit/${req.params.courseId}`);
         }
-        db.get("SELECT course_id AS id, title FROM Course WHERE course_id = ?", [content.course_id], (err, course) => {
-            if (err || !course) {
-                return res.redirect("/admin");
-            }
-            res.render("admin_content_edit", { content, course, error: null });
-        });
+        res.render("instructor_edit_content", { content, error: null });
     });
 });
 
-app.post("/admin/edit/course/:id/content/:cid", requireAdmin, (req, res) => {
-    const { title, body, Questions, A, B, C, D, Answer } = req.body;
-    db.get("SELECT course_id FROM Course_Content WHERE content_id = ?", [req.params.cid], (err, row) => {
-        if (err || !row) {
-            return res.redirect("/admin");
-        }
-        const courseId = row.course_id;
-        if (!title) {
-            db.get(`SELECT content_id AS id, course_id, topic AS title, content AS body, Questions, A, B, C, D, Answer
-                    FROM Course_Content WHERE content_id = ?`, [req.params.cid], (err2, content) => {
-                db.get("SELECT course_id AS id, title FROM Course WHERE course_id = ?", [courseId], (err3, course) => {
-                    res.render("admin_content_edit", { content, course, error: "ชื่อเนื้อหาไม่สามารถเว้นว่างได้" });
-                });
-            });
-            return;
-        }
-        db.run("UPDATE Course_Content SET topic = ?, content = ?, Questions = ?, A = ?, B = ?, C = ?, D = ?, Answer = ? WHERE content_id = ?", [title, body || "", Questions || "", A || "", B || "", C || "", D || "", Answer || "", req.params.cid], () => {
-            res.redirect(`/admin/edit/course/${courseId}/content?msg=edited`);
-        });
+app.post("/instructor/edit/:courseId/:contentId", (req, res) => {
+    if (!req.session.user) {
+        return res.redirect("/signin");
+    }
+    if (req.session.user.role !== "admin") {
+        return res.redirect("/home");
+    }
+    let { courseId, contentId } = req.params;
+    let { topic, content, Questions, A, B, C, D, Answer } = req.body;
+    let sql1 = `UPDATE Content
+                SET topic = ?, content = ?, Questions = ?, A = ?, B = ?, C = ?, D = ?, Answer = ?
+                WHERE content_id = ?`;
+    db.run(sql1, [topic, content, Questions, A, B, C, D, Answer, contentId], (_) => {
+        res.redirect(`/instructor/edit/${courseId}`);
     });
 });
 
-app.post("/admin/delete/course/:id/content/:cid", requireAdmin, (req, res) => {
-    db.get("SELECT course_id FROM Course_Content WHERE content_id = ?", [req.params.cid], (err, row) => {
-        const courseId = row ? row.course_id : null;
-        db.run("DELETE FROM Course_Content WHERE content_id = ?", [req.params.cid], () => {
-            res.redirect(`/admin/edit/course/${courseId}/content?msg=deleted`);
+app.post("/instructor/delete/:courseId/:contentId", (req, res) => {
+    if (!req.session.user) {
+        return res.redirect("/signin");
+    }
+    if (req.session.user.role !== "admin") {
+        return res.redirect("/home");
+    }
+    let { courseId, contentId } = req.params;
+    let sql1 = `DELETE FROM Content
+                WHERE content_id = ?`;
+    db.run(sql1, [contentId], (_) => {
+        let sql2 = `DELETE FROM Progression
+                    WHERE content_id = ?`;
+        db.run(sql2, [contentId], (_) => {
+            res.redirect(`/instructor/edit/${courseId}`);
         });
     });
 });
 
 app.listen(port, () => {
-    console.log(`Server started at http://localhost:${port}`);
+    console.log(`Codingo running on http://localhost:${port}`);
 });

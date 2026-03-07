@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <%- include('partials/head') %>
+    <title>เพิ่มบทเรียน - Codingo</title>
+</head>
+<body class="bg-white pt-16">
+    <%- include('partials/header') %>
+    <div class="max-w-2xl mx-auto px-6 py-10 min-h-screen">
+        <a href="/instructor" class="text-sm text-gray-500 mb-6 inline-block">← กลับหน้าจัดการเนื้อหา</a>
+        <h1 class="text-3xl font-bold mb-8">เพิ่มบทเรียนใหม่</h1>
+        <div class="bg-white border rounded-2xl p-7">
+            <% if (error) { %>
+            <div class="bg-red-50 border border-red-200 text-red-700 text-sm rounded-lg px-4 py-3 mb-5">
+                <%= error %>
+            </div>
+            <% } %>
+            <form action="/instructor/create" method="POST">
+                <div class="mb-5">
+                    <label class="block text-sm text-gray-500 mb-1.5">ชื่อบทเรียน <span class="text-red-400">*</span></label>
+                    <input type="text" name="title" placeholder="เช่น HTML พื้นฐาน" required class="w-full bg-white border rounded-lg px-4 py-2.5 text-sm text-black placeholder-gray-500 focus:outline-none" />
+                </div>
+                <div class="mb-5">
+                    <label class="block text-sm text-gray-500 mb-1.5">คำอธิบาย <span class="text-red-400">*</span></label>
+                    <textarea name="description" rows="3" placeholder="อธิบายเนื้อหาของบทเรียนนี้" required class="w-full bg-white border rounded-lg px-4 py-2.5 text-sm text-black placeholder-gray-500 focus:outline-none resize-none"></textarea>
+                </div>
+                <div class="mb-7">
+                    <label class="block text-sm text-gray-500 mb-1.5">หมวดหมู่</label>
+                    <select name="catagory_id" class="w-full bg-white border rounded-lg px-4 py-2.5 text-sm text-black focus:outline-none">
+                        <% categories.forEach(cat => { %>
+                            <option value="<%= cat.catagory_id %>"><%= cat.catagory_name %></option>
+                        <% }); %>
+                    </select>
+                </div>
+                <div class="flex gap-3">
+                    <button type="submit" class="bg-green-600 text-white px-6 py-2.5 rounded-lg text-sm">เพิ่มบทเรียน</button>
+                    <a href="/instructor" class="px-6 py-2.5 text-sm text-gray-500 border rounded-lg">ยกเลิก</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</body>
+</html>
