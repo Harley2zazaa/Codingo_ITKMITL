@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <%- include("partials/head") %>
+    <title>โปรไฟล์ - Codingo</title>
+</head>
+<body class="bg-white">
+    <div class="flex items-center justify-center p-6 min-h-screen">
+        <div class="w-full max-w-lg">
+            <a href="/home" class="text-sm text-gray-600 mb-6 inline-block"><-- ย้อนกลับ</a>
+            <h1 class="text-3xl mb-2">โปรไฟล์</h1>
+            <p class="text-gray-600 mb-8">รายละเอียดส่วนตัว</p>
+            <div class="border rounded-xl mb-4 shadow-md p-6">
+                <div class="flex items-center gap-4">
+                    <p class="w-14 h-14 rounded-full bg-gray-800 flex items-center justify-center text-white text-xl"><%= profileUser.username[0].toUpperCase() %></p>
+                    <div>
+                        <p class="text-gray-800"><%= profileUser.username %></p>
+                        <p class="text-sm text-gray-600"><%= profileUser.email %></p>
+                        <p class="text-xs text-gray-600 mt-1">XP <span class="text-orange-600 text-sm"><%= gamificate ? gamificate.xp : '-' %></span> · เลเวล <span class="text-blue-600 text-sm"><%= gamificate ? gamificate.level : '-' %></span></p>
+                    </div>
+                </div>
+                <% if (user.role == "student") { %>
+                <a href="/streak" class="inline-block w-full px-4 py-3 bg-orange-600 text-white text-sm text-center rounded-xl mt-4">ดูความต่อเนื่อง</a>
+                <% } %>
+            </div>
+            <div class="border rounded-xl p-6 shadow-md">
+                <h2 class="text-xl text-gray-800 mb-6">แก้ไขข้อมูลส่วนตัว</h2>
+                <form method="POST" action="/profile" onsubmit="return confirm('บันทึกข้อมูลใช่หรือไม่')">
+                    <div class="mb-4">
+                        <label class="block text-sm text-gray-600 mb-2">ชื่อผู้ใช้</label>
+                        <input type="text" name="username" value="<%= profileUser.username %>" placeholder="username" required class="w-full px-4 py-3 border rounded-xl text-sm text-gray-800 placeholder-gray-600"/>
+                    </div>
+                    <div class="mb-4">
+                        <label class="block text-sm text-gray-600 mb-2">อีเมล</label>
+                        <input type="email" name="email" value="<%= profileUser.email %>" placeholder="name@email.com" required class="w-full px-4 py-3 border rounded-xl text-sm text-gray-800 placeholder-gray-600"/>
+                    </div>
+                    <div class="mb-4">
+                        <label class="block text-sm text-gray-600 mb-2">รหัสผ่าน</label>
+                        <input type="password" name="password" value="<%= profileUser.password %>" placeholder="**********" required class="w-full px-4 py-3 border rounded-xl text-sm text-gray-800 placeholder-gray-600"/>
+                    </div>
+                    <button type="submit" class="w-full px-4 py-3 bg-blue-600 text-white text-sm rounded-xl">บันทึก</button>
+                </form>
+            </div>
+            <div class="mt-6 text-center">
+                <a href="/signout" class="text-sm text-red-600" onclick="return confirm('ลงชื่อออกใช่หรือไม่')">ลงชื่อออก</a>
+            </div>
+        </div>
+    </div>
+    <% if (success) { %>
+    <script>alert("บันทึกข้อมูลเรียบร้อย");</script>
+    <% } else if (error) { %>
+    <script>alert("<%= error %>");</script>
+    <% } %>
+</body>
+</html>

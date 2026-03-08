@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <%- include("partials/head") %>
+    <title>แก้ไขเนื้อหา - Codingo</title>
+</head>
+<body class="bg-white">
+    <%- include("partials/header") %>
+    <div class="max-w-4xl mx-auto p-6 pt-24 min-h-screen">
+        <a href="/instructor/edit/<%= content.course_id %>" class="text-sm text-gray-600 mb-6 inline-block"><-- ย้อนกลับ</a>
+        <h1 class="text-3xl text-gray-800 mb-1">แก้ไขเนื้อหา</h1>
+        <p class="text-gray-600 mb-6">แก้ไขเนื้อหาในระบบ</p>
+        <div class="bg-white border rounded-xl p-8 mb-6">
+            <form action="/instructor/edit/<%= content.course_id %>/<%= content.content_id %>" method="POST" onsubmit="return confirm('บันทึกข้อมูลใช่หรือไม่')">
+                <div class="mb-4">
+                    <label class="block text-sm text-gray-600 mb-2">ชื่อหัวข้อ<span class="text-red-400">*</span></label>
+                    <input type="text" name="topic" value="<%= content.topic %>" required class="w-full bg-white border rounded-xl px-4 py-3 text-sm text-gray-800 placeholder-gray-600"/>
+                </div>
+                <div class="mb-4">
+                    <label class="block text-sm text-gray-600 mb-2">เนื้อหา</label>
+                    <textarea name="content" rows="6" placeholder="เนื้อหาของบทนี้..." required class="w-full bg-white border rounded-xl px-4 py-3 text-sm text-gray-800 placeholder-gray-600 resize-none"><%= content.content %></textarea>
+                </div>
+                <div class="border-t pt-4 mt-2 mb-4">
+                    <p class="text-sm font-semibold text-gray-700 mb-2">แบบทดสอบ</p>
+                    <div class="mb-4">
+                        <label class="block text-sm text-gray-600 mb-2">คำถาม</label>
+                        <input type="text" name="Questions" value="<%= content.Questions %>" placeholder="คำถามแบบทดสอบ..." required class="w-full bg-white border rounded-xl px-4 py-3 text-sm text-gray-800 placeholder-gray-600"/>
+                    </div>
+                    <div class="grid grid-cols-2 gap-3 mb-4">
+                        <div>
+                            <label class="block text-sm text-gray-600 mb-2">ตัวเลือก A</label>
+                            <input type="text" name="A" value="<%= content.A %>" placeholder="ตัวเลือก A" required class="w-full bg-white border rounded-xl px-4 py-3 text-sm text-gray-800 placeholder-gray-600"/>
+                        </div>
+                        <div>
+                            <label class="block text-sm text-gray-600 mb-2">ตัวเลือก B</label>
+                            <input type="text" name="B" value="<%= content.B %>" placeholder="ตัวเลือก B" required class="w-full bg-white border rounded-xl px-4 py-3 text-sm text-gray-800 placeholder-gray-600"/>
+                        </div>
+                        <div>
+                            <label class="block text-sm text-gray-600 mb-2">ตัวเลือก C</label>
+                            <input type="text" name="C" value="<%= content.C %>" placeholder="ตัวเลือก C" required class="w-full bg-white border rounded-xl px-4 py-3 text-sm text-gray-800 placeholder-gray-600"/>
+                        </div>
+                        <div>
+                            <label class="block text-sm text-gray-600 mb-2">ตัวเลือก D</label>
+                            <input type="text" name="D" value="<%= content.D %>" placeholder="ตัวเลือก D" required class="w-full bg-white border rounded-xl px-4 py-3 text-sm text-gray-800 placeholder-gray-600"/>
+                        </div>
+                    </div>
+                    <div class="mb-6">
+                        <label class="block text-sm text-gray-600 mb-2">เฉลย (A, B, C หรือ D)</label>
+                        <select name="Answer" class="w-32 bg-white border rounded-xl px-4 py-3 text-sm text-gray-800">
+                            <option value="A" <%= content.Answer == 'A' ? 'selected' : '' %>>A</option>
+                            <option value="B" <%= content.Answer == 'B' ? 'selected' : '' %>>B</option>
+                            <option value="C" <%= content.Answer == 'C' ? 'selected' : '' %>>C</option>
+                            <option value="D" <%= content.Answer == 'D' ? 'selected' : '' %>>D</option>
+                        </select>
+                    </div>
+                </div>
+                <button type="submit" class="w-full bg-blue-600 text-white px-4 py-3 rounded-xl text-sm">บันทึก</button>
+            </form>
+        </div>
+    </div>
+    <% if (success) { %>
+    <script>alert("บันทึกเนื้อหาสำเร็จ");</script>
+    <% } %>
+</body>
+</html>

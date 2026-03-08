@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <%- include("partials/head") %>
+    <title><%= course.title %> - Codingo</title>
+</head>
+<body class="bg-white">
+    <%- include("partials/header") %>
+    <div class="max-w-4xl mx-auto p-6 pt-24 min-h-screen">
+        <a href="/<%- (user && inLibrary) ? 'library' : 'course' %>" class="text-sm text-gray-600 mb-6 inline-block"><-- ย้อนกลับ</a>
+        <div class="bg-white border border-l-8 border-l-<%= course.color %>-600 shadow-md rounded-xl p-6 mb-6">
+            <span class="text-xs px-3 py-1 rounded-full bg-gray-800 text-white"><%= course.catagory_name %></span>
+            <h1 class="text-2xl text-gray-800 mt-3 mb-2"><%= course.title %></h1>
+            <p class="text-gray-600 text-sm mb-5"><%= course.description %></p>
+            <% if (user) { %>
+            <% if (!inLibrary) { %>
+            <form method="POST" action="/course/add/<%= course.course_id %>" onsubmit="return confirm('เพิ่มบทเรียนนี้เข้าในคลังใช่หรือไม่')">
+                <button type="submit" class="bg-green-600 text-white text-sm px-4 py-3 rounded-xl">เพิ่มเข้าคลัง</button>
+            </form>
+            <% } else { %>
+            <form method="POST" action="/library/remove/<%= course.course_id %>" onsubmit="return confirm('ถอนบทเรียนนี้ออกจากคลังใช่หรือไม่')">
+                <button type="submit" class="bg-red-600 text-white text-sm px-4 py-3 rounded-xl">ถอนจากคลัง</button>
+            </form>
+            <% } %>
+            <% } else { %>
+            <a href="/signin" class="inline-block bg-gray-800 text-white text-sm px-4 py-3 rounded-xl">เข้าสู่ระบบ</a>
+            <% } %>
+        </div>
+        <h2 class="text-lg mb-4">เนื้อหาในบทเรียน <%= contents.length %> หัวข้อ</h2>
+        <div class="flex flex-col">
+            <% contents.forEach((item, index) => { %>
+            <% const isDone = completedIds && completedIds.includes(item.content_id) %>
+            <% if (!user || !inLibrary) { %>
+            <div class="flex items-center gap-3 px-5 py-4 bg-white border shadow-md rounded-xl mb-3">
+                <p class="w-8 h-8 flex items-center justify-center rounded-full text-xs bg-gray-800 text-white"><%= index + 1 %></p>
+                <p class="text-sm flex-1 text-gray-800"><%= item.topic %></p>
+                <p class="text-xs text-gray-600"><%= !user ? 'เข้าสู่ระบบ' : 'เพิ่มเข้าคลัง' %></p>
+            </div>
+            <% } else { %>
+            <details class="bg-white border shadow-md rounded-xl mb-3 overflow-hidden group" <%= activeContentId == item.content_id ? 'open' : '' %>>
+                <summary class="flex items-center gap-3 px-5 py-4">
+                    <p class="w-8 h-8 flex items-center justify-center rounded-full text-xs <%= isDone ? 'bg-green-600' : 'bg-gray-800' %> text-white"><%= index + 1 %></p>
+                    <p class="text-sm flex-1"><%= item.topic %></p>
+                </summary>
+                <div class="px-6 pb-2">
+                    <div class="border rounded-xl p-4 mb-4">
+                        <p class="text-gray-600 text-sm mb-4"><%= item.content %></p><hr><br>
+                        <p class="text-sm text-gray-800 mb-4"><%= item.Questions %></p>
+                        <form method="POST" action="/library/<%= course.course_id %>/<%= item.content_id %>" onsubmit="return confirm('ยืนยันตัวเลือกใช่หรือไม่')">
+                            <div class="grid grid-cols-1 gap-2 mb-3">
+                                <% let options = [['A', item.A], ['B', item.B], ['C', item.C], ['D', item.D]]; %>
+                                <% for (let o = 0; o < options.length; o++) { %>
+                                <label class="flex items-center gap-2 text-sm text-gray-600">
+                                    <input type="radio" name="answer" value="<%= options[o][0] %>"/>
+                                    <span><%= options[o][0] %>.</span><%= options[o][1] %>
+                                </label>
+                                <% } %>
+                            </div>
+                            <button type="submit" class="mt-1 text-xs bg-blue-600 text-white px-4 py-3 rounded-xl w-full">ส่งคำตอบ</button>
+                        </form>
+                        <% if (result && activeContentId == item.content_id) { %>
+                        <p class="text-xs mt-2 <%= result == 'correct' ? 'text-green-600' : 'text-red-600' %>"><%= result == 'correct' ? 'ถูกต้อง +10 XP' : 'ผิด ลองใหม่อีกครั้ง' %></p>
+                        <% } %>
+                    </div>
+                </div>
+            </details>
+            <% } %>
+            <% }); %>
+        </div>
+    </div>
+</body>
+</html>

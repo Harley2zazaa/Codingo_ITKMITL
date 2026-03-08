@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <%- include("partials/head") %>
+    <title>แก้ไขบทเรียน - Codingo</title>
+</head>
+<body class="bg-white">
+    <%- include("partials/header") %>
+    <div class="max-w-4xl mx-auto p-6 pt-24 min-h-screen">
+        <a href="/instructor" class="text-sm text-gray-600 mb-6 inline-block"><-- ย้อนกลับ</a>
+        <h1 class="text-3xl text-gray-800 mb-1">แก้ไขบทเรียน</h1>
+        <p class="text-gray-600 mb-6">แก้ไขบทเรียน, เพิ่ม แก้ไข และลบเนื้อหาในระบบ</p>
+        <div class="bg-white border rounded-xl p-8 mb-8 shadow-md">
+            <form action="/instructor/edit/<%= course.course_id %>" method="POST" onsubmit="return confirm('บันทึกข้อมูลใช่หรือไม่')">
+                <div class="mb-4">
+                    <label class="block text-sm text-gray-600 mb-2">ชื่อบทเรียน <span class="text-red-600">*</span></label>
+                    <input type="text" name="title" value="<%= course.title %>" required class="w-full bg-white border rounded-xl px-4 py-3 text-sm text-gray-800 placeholder-gray-600" />
+                </div>
+                <div class="mb-4">
+                    <label class="block text-sm text-gray-600 mb-2">คำอธิบาย <span class="text-red-600">*</span></label>
+                    <textarea name="description" rows="3" required class="w-full bg-white border rounded-xl px-4 py-3 text-sm text-gray-800 placeholder-gray-600 resize-none"><%= course.description %></textarea>
+                </div>
+                <div class="mb-6">
+                    <label class="block text-sm text-gray-600 mb-2">หมวดหมู่</label>
+                    <select name="catagory_id" class="w-full bg-white border rounded-xl px-4 py-3 text-sm text-gray-800">
+                        <% categories.forEach(cat => { %>
+                        <option value="<%= cat.catagory_id %>" <%= course.catagory_id == cat.catagory_id ? 'selected' : '' %>><%= cat.catagory_name %></option>
+                        <% }); %>
+                    </select>
+                </div>
+                <button type="submit" class="w-full bg-blue-600 text-white px-4 py-3 rounded-xl text-sm">บันทึก</button>
+            </form>
+        </div>
+        <div class="flex items-center justify-between mb-4">
+            <h2 class="text-lg">เนื้อหาทั้งหมด <%= contents.length %> หัวข้อ</h2>
+            <a href="/instructor/create/<%= course.course_id %>" class="bg-green-600 text-white px-4 py-3 rounded-xl text-sm">เพิ่มเนื้อหา</a>
+        </div>
+        <div class="flex flex-col">
+            <% contents.forEach((item, index) => { %>
+            <div class="flex items-center gap-3 px-5 py-4 bg-white border shadow-md rounded-xl mb-3">
+                <p class="w-8 h-8 flex items-center justify-center rounded-full text-xs bg-gray-800 text-white"><%= index + 1 %></p>
+                <p class="text-sm flex-1 text-gray-800"><%= item.topic %></p>
+                <div class="flex items-center gap-2">
+                    <a href="/instructor/edit/<%= item.course_id %>/<%= item.content_id %>" class="text-xs px-3 py-2 bg-blue-600 rounded-xl text-white">แก้ไข</a>
+                    <form action="/instructor/delete/<%= item.course_id %>/<%= item.content_id %>" method="POST" onsubmit="return confirm('ลบเนื้อหานี้ใช่หรือไม่')">
+                        <button type="submit" class="text-xs px-3 py-2 bg-red-600 rounded-xl text-white">ลบ</button>
+                    </form>
+                </div>
+            </div>
+            <% }); %>
+        </div>
+    </div>
+    <% if (success === 'updated') { %>
+    <script>alert("บันทึกบทเรียนสำเร็จ");</script>
+    <% } else if (success === 'created') { %>
+    <script>alert("เพิ่มเนื้อหาสำเร็จ");</script>
+    <% } else if (success === 'deleted') { %>
+    <script>alert("ลบเนื้อหาสำเร็จ");</script>
+    <% } %>
+</body>
+</html>

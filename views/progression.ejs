@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <%- include("partials/head") %>
+    <title>ความก้าวหน้า - Codingo</title>
+</head>
+<body class="bg-white">
+    <%- include("partials/header") %>
+    <div class="max-w-6xl mx-auto p-6 pt-24 min-h-screen">
+        <h1 class="text-3xl mb-2">ความก้าวหน้า</h1>
+        <p class="text-gray-600 mb-8">ความคืบหน้าของแต่ละบทเรียน</p>
+        <%  let totalCourses = courses.length;
+            let completedCourses = courses.filter(course => {
+                let cc = contents.filter(c => c.course_id == course.course_id);
+                return cc.length > 0 && cc.every(c => completedIds.includes(c.content_id));
+            }).length;
+            let overallPercent = totalCourses > 0 ? Math.round((completedCourses / totalCourses) * 100) : 0; %>
+        <div class="border rounded-xl p-6 mb-8 shadow-md">
+            <div class="flex items-center justify-between mb-3">
+                <p class="text-sm text-gray-600">เรียนจบแล้ว</p>
+                <p class="text-sm text-gray-600"><%= completedCourses %>/<%= totalCourses %> บทเรียน</p>
+            </div>
+            <div class="w-full bg-gray-600 rounded-full h-2">
+                <div class="bg-blue-600 h-2 rounded-full" style="width: <%= overallPercent %>%"></div>
+            </div>
+        </div>
+        <h2 class="text-base text-gray-600 mb-4">บทเรียนทั้งหมด <%= courses.length %> บทเรียน</h2>
+        <div class="flex flex-col gap-4">
+            <% courses.forEach((course) => {
+                let courseContents = contents.filter(c => c.course_id == course.course_id);
+                let courseDone = courseContents.filter(c => completedIds.includes(c.content_id)).length;
+                let courseTotal = courseContents.length;
+                let coursePercent = courseTotal > 0 ? Math.round((courseDone / courseTotal) * 100) : 0;
+                let barColor = coursePercent < 25 ? "red" : coursePercent < 50 ? "orange" : coursePercent < 75 ? "yellow" : "green"; %>
+            <div class="border border-l-8 border-l-<%= course.color %>-600 rounded-xl shadow-md overflow-hidden">
+                <div class="p-6">
+                    <div class="flex items-start justify-between mb-2">
+                        <div>
+                            <span class="text-xs px-3 py-1 rounded-full bg-gray-800 text-white mt-1 mb-2 inline-block"><%= course.catagory_name %></span>
+                            <h3 class="text-gray-800"><%= course.title %></h3>
+                        </div>
+                        <div class="text-right ml-4">
+                            <p class="text-lg text-gray-800"><%= coursePercent %>%</p>
+                            <p class="text-xs text-gray-600"><%= courseDone %>/<%= courseTotal %> หัวข้อ</p>
+                        </div>
+                    </div>
+                    <div class="w-full bg-gray-600 rounded-full mt-3 mb-4">
+                        <div class="bg-<%= barColor %>-600 h-2 rounded-full" style="width: <%= coursePercent %>%"></div>
+                    </div>
+                    <% if (courseContents.length) { %>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                        <% courseContents.forEach((item) => {
+                            let done = completedIds.includes(item.content_id); %>
+                        <a href="/library/<%= course.course_id %>?content=<%= item.content_id %>"
+                           class="flex items-center gap-2 px-3 py-2 rounded-xl text-xs <%= done ? 'bg-green-100 text-green-600' : 'bg-gray-100 text-gray-600' %>">
+                            <span class="w-5 h-5 rounded-full flex items-center justify-center text-white text-xs <%= done ? 'bg-green-600' : 'bg-gray-600' %>"></span>
+                            <span class="truncate"><%= item.topic %></span>
+                        </a>
+                        <% }); %>
+                    </div>
+                    <% } %>
+                </div>
+            </div>
+            <% }); %>
+        </div>
+    </div>
+</body>
+</html>

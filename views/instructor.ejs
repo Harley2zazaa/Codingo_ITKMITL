@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <%- include("partials/head") %>
+    <title>จัดการบทเรียน - Codingo</title>
+</head>
+<body class="bg-white">
+    <%- include("partials/header") %>
+    <div class="max-w-4xl mx-auto p-6 pt-24 min-h-screen">
+        <div class="flex items-center justify-between mb-8">
+            <div>
+                <h1 class="text-gray-800 text-3xl">จัดการบทเรียน</h1>
+                <p class="text-gray-600 mt-1">เพิ่ม แก้ไข และลบบทเรียนในระบบ</p>
+            </div>
+            <a href="/instructor/create" class="bg-green-600 text-white px-5 py-3 rounded-xl text-sm">เพิ่มบทเรียน</a>
+        </div>
+        <div class="bg-white border rounded-xl overflow-hidden">
+            <table class="w-full text-sm">
+                <tr class="text-xs text-gray-600 uppercase tracking-wide">
+                    <th class="px-5 py-3 text-left">ชื่อบทเรียน</th>
+                    <th class="px-5 py-3 text-left">หมวดหมู่</th>
+                    <th class="px-5 py-3 text-center">จำนวนเนื้อหา</th>
+                    <th class="px-5 py-3 text-right">การจัดการ</th>
+                </tr>
+                <% courses.forEach((item) => { %>
+                <tr class="border-t">
+                    <td class="px-5 py-3 text-left text-gray-800"><%= item.title %></td>
+                    <td class="px-5 py-3 text-left"><span class="text-xs px-3 py-1 rounded-full bg-gray-800 text-white"><%= item.catagory_name %></span></td>
+                    <td class="px-5 py-3 text-center text-gray-800"><%= item.content_count %></td>
+                    <td class="px-5 py-3 text-right">
+                        <div class="flex justify-end gap-2">
+                            <a href="/instructor/edit/<%= item.course_id %>" class="text-xs px-3 py-2 bg-blue-600 rounded-xl text-white">แก้ไขบทเรียน</a>
+                            <form action="/instructor/delete/<%= item.course_id %>" method="POST" class="inline" onsubmit="return confirm('ต้องการลบบทเรียน <%= item.title %> ใช่หรือไม่?')">
+                                <button type="submit" class="text-xs px-3 py-2 bg-red-600 border border-red-600 rounded-xl text-white">ลบ</button>
+                            </form>
+                        </div>
+                    </td>
+                </tr>
+                <% }); %>
+            </table>
+        </div>
+    </div>
+    <% if (success === 'created') { %>
+    <script>alert("เพิ่มบทเรียนสำเร็จ");</script>
+    <% } else if (success === 'deleted') { %>
+    <script>alert("ลบบทเรียนสำเร็จ");</script>
+    <% } %>
+</body>
+</html>
