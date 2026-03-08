@@ -50,9 +50,25 @@ git clone https://github.com/Harley2zazaa/Codingo_ITKMITL.git
 
 ## Getting Start
 
-### Run project
+### Setting up
 
 Open your ```Terminal``` and go this project folder where this project file downloaded on your device and run
+
+```sh
+npm init -y
+```
+
+### Install packages
+
+After previous part then run
+
+```sh
+npm install express ejs sqlite3 express-session
+```
+
+### Run project
+
+Start local server
 
 ```sh
 nodemon index.js
