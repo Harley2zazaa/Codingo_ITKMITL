@@ -16,16 +16,16 @@
                 <h2 class="text-xl text-gray-800 mb-6">สร้างบัญชี</h2>
                 <form action="/register" method="POST" onsubmit="return confirm('ต้องการสร้างบัญชีใหม่ใช่หรือไม่')">
                     <div class="mb-4">
+                        <label class="block text-sm text-gray-600 mb-2">ชื่อผู้ใช้</label>
+                        <input type="text" name="username" placeholder="username" required class="w-full bg-white border rounded-xl px-4 py-3 text-sm text-gray-800 placeholder-gray-600"/>
+                    </div>
+                    <div class="mb-4">
                         <label class="block text-sm text-gray-600 mb-2">อีเมล</label>
                         <input type="email" name="email" placeholder="name@email.com" required class="w-full bg-white border rounded-xl px-4 py-3 text-sm text-gray-800 placeholder-gray-600"/>
                     </div>
-                    <div class="mb-4">
+                    <div class="mb-6">
                         <label class="block text-sm text-gray-600 mb-2">รหัสผ่าน</label>
                         <input type="password" name="password" placeholder="**********" required class="w-full bg-white border rounded-xl px-4 py-3 text-sm text-gray-800 placeholder-gray-600"/>
-                    </div>
-                    <div class="mb-6">
-                        <label class="block text-sm text-gray-600 mb-2">ชื่อผู้ใช้</label>
-                        <input type="text" name="username" placeholder="username" required class="w-full bg-white border rounded-xl px-4 py-3 text-sm text-gray-800 placeholder-gray-600"/>
                     </div>
                     <button type="submit" class="w-full bg-blue-600 text-white text-sm px-4 py-3 rounded-xl">สร้างบัญชี</button>
                 </form>

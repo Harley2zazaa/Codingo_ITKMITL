@@ -99,14 +99,14 @@ app.get("/register", (req, res) => {
 });
 
 app.post("/register", (req, res) => {
-    let { email, password, username } = req.body;
+    let { username, email, password } = req.body;
     let sql1 = `SELECT *
                 FROM Account
-                WHERE email = ? OR username = ?`;
-    db.all(sql1, [email, username], (err1, existing) => {
+                WHERE username = ? OR email = ?`;
+    db.all(sql1, [username, email], (err1, existing) => {
         if (err1) throw err1;
         if (existing.length > 0) {
-            return res.render("register", { error: "ชื่อผู้ใช้หรืออีเมลนี้มีในระบบแล้ว" });
+            return res.render("register", { error: "ชื่อผู้ใช้ หรืออีเมลนี้มีในระบบแล้ว" });
         }
         let sql2 = `INSERT INTO Account (username, email, password) VALUES
                     (?, ?, ?)`;
@@ -387,33 +387,44 @@ app.get("/profile", requireSignin, (req, res) => {
                 WHERE account_id = ?`;
     db.get(sql1, [req.session.user.account_id], (err1, user) => {
         if (err1) throw err1;
-        let sql2 = `SELECT * FROM Gamificate WHERE account_id = ?`;
+        let sql2 = `SELECT *
+                    FROM Gamificate
+                    WHERE account_id = ?`;
         db.get(sql2, [req.session.user.account_id], (err2, gamificate) => {
             if (err2) throw err2;
-            res.render("profile", { profileUser: user, gamificate: gamificate || null, success: null });
+            res.render("profile", { profileUser: user, gamificate: gamificate || null, success: null, error: req.query.error || null });
         });
     });
 });
 
 app.post("/profile", requireSignin, (req, res) => {
     let { username, email, password } = req.body;
-    let sql1 = `UPDATE Account
-                SET username = ?, email = ?, password = ?
-                WHERE account_id = ?`;
-    db.run(sql1, [username, email, password, req.session.user.account_id], (err1) => {
+    let sql1 = `SELECT *
+                FROM Account
+                WHERE (email = ? OR username = ?) AND account_id != ?`;
+    db.all(sql1, [email, username, req.session.user.account_id], (err1, existing) => {
         if (err1) throw err1;
-        let sql2 = `SELECT *
-                    FROM Account
+        if (existing.length > 0) {
+            return res.redirect("/profile?error=ชื่อผู้ใช้ หรืออีเมลนี้มีในระบบแล้ว");
+        }
+        let sql2 = `UPDATE Account
+                    SET username = ?, email = ?, password = ?
                     WHERE account_id = ?`;
-        db.get(sql2, [req.session.user.account_id], (err2, user) => {
+        db.run(sql2, [username, email, password, req.session.user.account_id], (err2) => {
             if (err2) throw err2;
-            req.session.user = user;
             let sql3 = `SELECT *
-                        FROM Gamificate
+                        FROM Account
                         WHERE account_id = ?`;
-            db.get(sql3, [req.session.user.account_id], (err3, gamificate) => {
+            db.get(sql3, [req.session.user.account_id], (err3, user) => {
                 if (err3) throw err3;
-                res.render("profile", { profileUser: user, gamificate: gamificate || null, success: "บันทึกข้อมูลเรียบร้อย" });
+                req.session.user = user;
+                let sql4 = `SELECT *
+                            FROM Gamificate
+                            WHERE account_id = ?`;
+                db.get(sql4, [req.session.user.account_id], (err4, gamificate) => {
+                    if (err4) throw err4;
+                    res.render("profile", { profileUser: user, gamificate: gamificate || null, success: "บันทึกข้อมูลเรียบร้อย", error: null });
+                });
             });
         });
     });
