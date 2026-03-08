@@ -45,7 +45,7 @@
                 <div class="px-6 pb-2">
                     <div class="border rounded-xl p-4 mb-4">
                         <p class="text-sm text-gray-800 mb-3"><%= item.Questions %></p>
-                        <form method="POST" action="/library/<%= course.course_id %>/<%= item.content_id %>" onsubmit="return confirm('ยืนยันตัวเลือกใช่หรือไม่')>
+                        <form method="POST" action="/library/<%= course.course_id %>/<%= item.content_id %>" onsubmit="return confirm('ยืนยันตัวเลือกใช่หรือไม่')">
                             <div class="grid grid-cols-1 gap-2 mb-3">
                                 <% [['A', item.A], ['B', item.B], ['C', item.C], ['D', item.D]].forEach(([key, val]) => { %>
                                 <label class="flex items-center gap-2 text-sm text-gray-600">

@@ -52,7 +52,7 @@
                         <% courseContents.forEach((item) => {
                             let done = completedIds.includes(item.content_id); %>
                         <a href="/library/<%= course.course_id %>?content=<%= item.content_id %>"
-                           class="flex items-center gap-2 px-3 py-2 rounded-xl text-xs <%= done ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-600' %>">
+                           class="flex items-center gap-2 px-3 py-2 rounded-xl text-xs <%= done ? 'bg-green-100 text-green-600' : 'bg-gray-100 text-gray-600' %>">
                             <span class="w-5 h-5 rounded-full flex items-center justify-center text-white text-xs <%= done ? 'bg-green-600' : 'bg-gray-600' %>"></span>
                             <span class="truncate"><%= item.topic %></span>
                         </a>
