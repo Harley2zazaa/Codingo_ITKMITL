@@ -1,17 +1,17 @@
 <!DOCTYPE html>
-<html lang="th">
+<html lang="en">
 <head>
-    <%- include('partials/head') %>
+    <%- include("partials/head") %>
     <title>แก้ไขบทเรียน - Codingo</title>
 </head>
 <body class="bg-white">
-    <%- include('partials/header') %>
+    <%- include("partials/header") %>
     <div class="max-w-4xl mx-auto p-6 pt-24 min-h-screen">
         <a href="/instructor" class="text-sm text-gray-600 mb-6 inline-block"><-- ย้อนกลับ</a>
         <h1 class="text-3xl text-gray-800 mb-1">แก้ไขบทเรียน</h1>
         <p class="text-gray-600 mb-6">แก้ไขบทเรียน, เพิ่ม แก้ไข และลบเนื้อหาในระบบ</p>
         <div class="bg-white border rounded-xl p-8 mb-8 shadow-md">
-            <form action="/instructor/edit/<%= course.course_id %>" method="POST">
+            <form action="/instructor/edit/<%= course.course_id %>" method="POST" onsubmit="return confirm('บันทึกข้อมูลใช่หรือไม่')">
                 <div class="mb-4">
                     <label class="block text-sm text-gray-600 mb-2">ชื่อบทเรียน <span class="text-red-600">*</span></label>
                     <input type="text" name="title" value="<%= course.title %>" required class="w-full bg-white border rounded-xl px-4 py-3 text-sm text-gray-800 placeholder-gray-600" />
@@ -28,14 +28,14 @@
                         <% }); %>
                     </select>
                 </div>
-                <button type="submit" class="w-full bg-blue-600 text-white px-4 py-3 rounded-xl text-sm">บันทึกการแก้ไข</button>
+                <button type="submit" class="w-full bg-blue-600 text-white px-4 py-3 rounded-xl text-sm">บันทึก</button>
             </form>
         </div>
         <div class="flex items-center justify-between mb-4">
-            <h2 class="text-lg">เนื้อหาทั้งหมด <%= contents.length %> บท</h2>
+            <h2 class="text-lg">เนื้อหาทั้งหมด <%= contents.length %> หัวข้อ</h2>
             <a href="/instructor/create/<%= course.course_id %>" class="bg-green-600 text-white px-4 py-3 rounded-xl text-sm">เพิ่มเนื้อหา</a>
         </div>
-        <div class="flex flex-col gap-3">
+        <div class="flex flex-col">
             <% contents.forEach((item, index) => { %>
             <div class="flex items-center gap-3 px-5 py-4 bg-white border shadow-md rounded-xl mb-3">
                 <p class="w-8 h-8 flex items-center justify-center rounded-full text-xs bg-gray-800 text-white"><%= index + 1 %></p>

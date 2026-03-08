@@ -1,17 +1,17 @@
 <!DOCTYPE html>
-<html lang="th">
+<html lang="en">
 <head>
-    <%- include('partials/head') %>
-    <title>เพิ่มเนื้อหา - Codingo</title>
+    <%- include("partials/head") %>
+    <title>สร้างเนื้อหา - Codingo</title>
 </head>
 <body class="bg-white">
-    <%- include('partials/header') %>
+    <%- include("partials/header") %>
     <div class="max-w-4xl mx-auto p-6 pt-24 min-h-screen">
         <a href="/instructor/edit/<%= courseId %>" class="text-sm text-gray-600 mb-6 inline-block"><-- ย้อนกลับ</a>
-        <h1 class="text-3xl text-gray-800 mb-1">เพิ่มเนื้อหาใหม่</h1>
-        <p class="text-gray-600 mb-6">เพิ่มเนื้อหาในระบบ</p>
+        <h1 class="text-3xl text-gray-800 mb-1">สร้างเนื้อหาใหม่</h1>
+        <p class="text-gray-600 mb-6">สร้างเนื้อหาในระบบ</p>
         <div class="bg-white border rounded-xl p-8 mb-8 shadow-md">
-            <form action="/instructor/create/<%= courseId %>" method="POST">
+            <form action="/instructor/create/<%= courseId %>" method="POST" onsubmit="return confirm('สร้างเนื้อหาใช่หรือไม่')">
                 <div class="mb-4">
                     <label class="block text-sm text-gray-600 mb-2">ชื่อหัวข้อ<span class="text-red-400">*</span></label>
                     <input type="text" name="topic" placeholder="เช่น โครงสร้างพื้นฐานของ HTML5" required class="w-full bg-white border rounded-xl px-4 py-3 text-sm text-gray-800 placeholder-gray-600"/>
@@ -54,7 +54,7 @@
                         </select>
                     </div>
                 </div>
-                <button type="submit" class="w-full bg-green-600 text-white px-4 py-3 rounded-xl text-sm">เพิ่มเนื้อหา</button>
+                <button type="submit" class="w-full bg-green-600 text-white px-4 py-3 rounded-xl text-sm">สร้างเนื้อหา</button>
             </form>
         </div>
     </div>

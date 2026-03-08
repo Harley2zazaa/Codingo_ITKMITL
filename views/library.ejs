@@ -1,11 +1,11 @@
 <!DOCTYPE html>
-<html lang="th">
+<html lang="en">
 <head>
-    <%- include('partials/head') %>
+    <%- include("partials/head") %>
     <title>คลังส่วนตัว - Codingo</title>
 </head>
 <body class="bg-white">
-    <%- include('partials/header') %>
+    <%- include("partials/header") %>
     <div class="max-w-6xl mx-auto p-6 pt-24 min-h-screen">
         <h1 class="text-3xl mb-2">คลังส่วนตัว</h1>
         <p class="text-gray-600 mb-8">บทเรียนที่คุณเพิ่มไว้</p>
@@ -15,13 +15,13 @@
                 <span class="text-xs px-3 py-1 rounded-full bg-gray-800 text-white self-start"><%= item.catagory_name %></span>
                 <div class="flex items-center justify-between mt-3">
                     <h2 class="text-gray-800 mb-1"><%= item.title %></h2>
-                    <span class="text-xs text-gray-600"><%= item.done %>/<%= item.total %></span>
+                    <span class="text-xs text-gray-600"><%= item.done %>/<%= item.total %> หัวข้อ</span>
                 </div>
                 <p class="text-sm text-gray-600 line-clamp-2 flex-1"><%= item.description %></p>
                 <% let percent = Math.round((item.done / item.total) * 100); %>
-                <% let tagColor = percent < 25 ? "red": percent < 50 ? "orange": percent < 75 ? "yellow": "green"; %>
+                <% let barColor = percent < 25 ? "red": percent < 50 ? "orange": percent < 75 ? "yellow": "green"; %>
                 <div class="w-full bg-gray-500 rounded-full mt-3">
-                    <div class="bg-<%= tagColor %>-600 h-1.5 rounded-full" style="width: <%= percent %>%"></div>
+                    <div class="bg-<%= barColor %>-600 h-2 rounded-full" style="width: <%= percent %>%"></div>
                 </div>
             </a>
             <% }); %>

@@ -9,9 +9,9 @@
         <% if (user.role == "admin") { %>
         <a href="/instructor" class="text-gray-800 text-sm">จัดการบทเรียน</a>
         <% } %>
-        <a href="/profile" class="flex items-center justify-center w-10 h-10 rounded-full bg-gray-800 text-white text-xs"><%= user.username.charAt(0).toUpperCase() %></a>
+        <a href="/profile" class="flex items-center justify-center w-10 h-10 rounded-full bg-gray-800 text-white text-xs"><%= user.username[0].toUpperCase() %></a>
         <% } else { %>
-        <a href="/signin" class="px-4 py-3 bg-gray-800 text-white text-xs rounded-xl">เข้าสู่ระบบ</a>
+        <a href="/signin" class="px-4 py-3 bg-gray-800 text-white text-xs rounded-xl">ลงชื่อเข้าใช้</a>
         <% } %>
     </div>
 </div>
