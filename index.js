@@ -116,6 +116,9 @@ app.get("/streak", (req, res) => {
     if (!req.session.user) {
         return res.redirect("/signin");
     }
+    if (req.session.user.role == "admin") {
+        return res.redirect("/home");
+    }
     let sql1 = `SELECT *
                 FROM Gamificate
                 WHERE account_id = ?`;

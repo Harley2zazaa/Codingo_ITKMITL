@@ -10,13 +10,18 @@
             <a href="/home" class="text-sm text-gray-600 mb-6 inline-block"><-- ย้อนกลับ</a>
             <h1 class="text-3xl mb-2">โปรไฟล์</h1>
             <p class="text-gray-600 mb-8">รายละเอียดส่วนตัว</p>
-            <div class="flex items-center gap-4 p-5 border rounded-xl mb-4 shadow-md">
-                <p class="w-14 h-14 rounded-full bg-gray-800 flex items-center justify-center text-white text-xl"><%= profileUser.username[0].toUpperCase() %></p>
-                <div>
-                    <p class="text-gray-800"><%= profileUser.username %></p>
-                    <p class="text-sm text-gray-600"><%= profileUser.email %></p>
-                    <p class="text-xs text-gray-600 mt-1">XP <span class="text-orange-600 text-sm"><%= gamificate.xp %></span> · เลเวล <span class="text-blue-600 text-sm"><%= gamificate.level %></span> · Streak <span class="text-green-600 text-sm"><%= gamificate.streak %></span> วัน</p>
+            <div class="border rounded-xl mb-4 shadow-md p-6">
+                <div class="flex items-center gap-4">
+                    <p class="w-14 h-14 rounded-full bg-gray-800 flex items-center justify-center text-white text-xl"><%= profileUser.username[0].toUpperCase() %></p>
+                    <div>
+                        <p class="text-gray-800"><%= profileUser.username %></p>
+                        <p class="text-sm text-gray-600"><%= profileUser.email %></p>
+                        <p class="text-xs text-gray-600 mt-1">XP <span class="text-orange-600 text-sm"><%= gamificate.xp %></span> · เลเวล <span class="text-blue-600 text-sm"><%= gamificate.level %></span></p>
+                    </div>
                 </div>
+                <% if (user.role == "student") { %>
+                <a href="/streak" class="inline-block w-full px-4 py-3 bg-orange-600 text-white text-sm text-center rounded-xl mt-4">ดูความต่อเนื่อง</a>
+                <% } %>
             </div>
             <div class="border rounded-xl p-6 shadow-md">
                 <h2 class="text-xl text-gray-800 mb-6">แก้ไขข้อมูลส่วนตัว</h2>
