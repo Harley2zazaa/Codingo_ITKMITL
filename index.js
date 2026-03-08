@@ -51,8 +51,26 @@ app.post("/signin", (req, res) => {
         if (!user) {
             return res.render("signin", { error: "อีเมล ชื่อผู้ใช้ หรือรหัสผ่านไม่ถูกต้อง" });
         }
-        req.session.user = user;
-        res.redirect("/home");
+        let sql2 = `SELECT * FROM Gamificate WHERE account_id = ?`;
+        db.get(sql2, [user.account_id], (_, gamificate) => {
+            let today = new Date().toLocaleDateString("en-CA", { timeZone: "Asia/Bangkok" });
+            let yesterday = new Date(Date.now() - 86400000).toLocaleDateString("en-CA", { timeZone: "Asia/Bangkok" });
+            let lastActive = gamificate.last_active;
+            let newStreak = gamificate.streak;
+            if (lastActive == today) {
+                req.session.user = user;
+                return res.redirect("/home");
+            }
+            newStreak = lastActive == yesterday ? newStreak + 1 : 1;
+            let sql3 = `UPDATE Gamificate
+                        SET last_active = DATE(DATETIME('now', '+7 hours')),
+                        streak = ?
+                        WHERE account_id = ?`;
+            db.run(sql3, [newStreak, user.account_id], (_) => {
+                req.session.user = user;
+                res.redirect("/streak");
+            });
+        });
     });
 });
 
@@ -65,27 +83,44 @@ app.post("/register", (req, res) => {
     let sql1 = `SELECT *
                 FROM Account
                 WHERE email = ? OR username = ?`;
-    db.get(sql1, [email, username], (_, existing) => {
-        if (existing) {
+    db.all(sql1, [email, username], (_, existing) => {
+        if (existing.length > 0) {
             return res.render("register", { error: "ชื่อผู้ใช้หรืออีเมลนี้มีในระบบแล้ว" });
         }
         let sql2 = `INSERT INTO Account (username, email, password) VALUES
                     (?, ?, ?)`;
-        db.run(sql2, [username, email, password], (err) => {
+        db.run(sql2, [username, email, password], function (err) {
             if (err) {
                 return res.render("register", { error: "เกิดข้อผิดพลาด" });
             }
             let newAccountId = this.lastID;
             let sql3 = `INSERT INTO Gamificate (account_id, xp, last_active, level, streak) VALUES
-                        (?, 0, DATE('now'), 0, 0)`;
-            db.run(sql3, [newAccountId], (_) => {
-                let sql4 = `SELECT * FROM Account WHERE account_id = ?`;
+                        (?, 0, DATE(DATETIME('now', '+7 hours')), 0, 0)`;
+            db.run(sql3, [newAccountId], (err) => {
+                if (err) {
+                    return res.render("register", { error: "เกิดข้อผิดพลาด" });
+                }
+                let sql4 = `SELECT *
+                            FROM Account
+                            WHERE account_id = ?`;
                 db.get(sql4, [newAccountId], (_, user) => {
                     req.session.user = user;
                     res.redirect("/home");
                 });
             });
         });
+    });
+});
+
+app.get("/streak", (req, res) => {
+    if (!req.session.user) {
+        return res.redirect("/signin");
+    }
+    let sql1 = `SELECT *
+                FROM Gamificate
+                WHERE account_id = ?`;
+    db.get(sql1, [req.session.user.account_id], (_, gamificate) => {
+        res.render("streak", { gamificate });
     });
 });
 
@@ -206,12 +241,12 @@ app.get("/library/:courseId", (req, res) => {
                     WHERE Course.course_id = ?`
         db.get(sql2, [courseId], (_, course) => {
             let sql3 = `SELECT *
-                    FROM Content
-                    WHERE course_id = ?`;
+                        FROM Content
+                        WHERE course_id = ?`;
             db.all(sql3, [courseId], (_, contents) => {
                 let sql4 = `SELECT content_id
-                        FROM Progression
-                        WHERE account_id = ? AND course_id = ? AND completed = 1`;
+                            FROM Progression
+                            WHERE account_id = ? AND course_id = ? AND completed = 1`;
                 db.all(sql4, [req.session.user.account_id, courseId], (_, progRows) => {
                     const completedIds = (progRows || []).map(r => r.content_id);
                     let activeContent = null;
