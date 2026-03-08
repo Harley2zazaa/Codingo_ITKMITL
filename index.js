@@ -27,14 +27,14 @@ app.use((req, res, next) => {
 app.set("view engine", "ejs");
 app.set("views", path.join(__dirname, "views"));
 
-function requireLogin(req, res, next) {
+function requireSignin(req, res, next) {
     if (!req.session.user) {
         return res.redirect("/signin");
     }
     next();
 }
 
-function requireAdmin(req, res, next) {
+function requireInstructor(req, res, next) {
     if (!req.session.user) {
         return res.redirect("/signin");
     }
@@ -134,7 +134,7 @@ app.post("/register", (req, res) => {
     });
 });
 
-app.get("/streak", requireLogin, (req, res) => {
+app.get("/streak", requireSignin, (req, res) => {
     if (req.session.user.role == "admin") {
         return res.redirect("/home");
     }
@@ -210,7 +210,7 @@ app.get("/course/:courseId", (req, res) => {
     });
 });
 
-app.post("/course/add/:courseId", requireLogin, (req, res) => {
+app.post("/course/add/:courseId", requireSignin, (req, res) => {
     let courseId = req.params.courseId;
     let sql1 = `SELECT *
                 FROM Library
@@ -229,7 +229,7 @@ app.post("/course/add/:courseId", requireLogin, (req, res) => {
     });
 });
 
-app.get("/library", requireLogin, (req, res) => {
+app.get("/library", requireSignin, (req, res) => {
     let sql1 = `SELECT Course.*, Catagory.catagory_name, Catagory.color,
                 (SELECT COUNT(*) FROM Content WHERE Content.course_id = Course.course_id) as total,
                 (SELECT COUNT(*) FROM Progression WHERE Progression.course_id = Course.course_id AND Progression.account_id = ? AND Progression.completed = 1) as done
@@ -245,7 +245,7 @@ app.get("/library", requireLogin, (req, res) => {
     });
 });
 
-app.get("/library/:courseId", requireLogin, (req, res) => {
+app.get("/library/:courseId", requireSignin, (req, res) => {
     let accountId = req.session.user.account_id;
     let courseId = req.params.courseId;
     let activeContentId = req.query.content || null;
@@ -281,7 +281,7 @@ app.get("/library/:courseId", requireLogin, (req, res) => {
     });
 });
 
-app.post("/library/remove/:courseId", requireLogin, (req, res) => {
+app.post("/library/remove/:courseId", requireSignin, (req, res) => {
     let sql1 = `DELETE FROM Library
                 WHERE account_id = ? AND course_id = ?`;
     db.run(sql1, [req.session.user.account_id, req.params.courseId], () => {
@@ -289,7 +289,7 @@ app.post("/library/remove/:courseId", requireLogin, (req, res) => {
     });
 });
 
-app.post("/library/:courseId/:contentId", requireLogin, (req, res) => {
+app.post("/library/:courseId/:contentId", requireSignin, (req, res) => {
     let accountId = req.session.user.account_id;
     let courseId = req.params.courseId;
     let contentId = req.params.contentId;
@@ -331,7 +331,7 @@ app.post("/library/:courseId/:contentId", requireLogin, (req, res) => {
     });
 });
 
-app.get("/leaderboard", requireLogin, (req, res) => {
+app.get("/leaderboard", requireSignin, (req, res) => {
     let sql1 = `SELECT Account.*,
                 COALESCE(Gamificate.xp, 0) as xp,
                 COALESCE(Gamificate.level, 0) as level,
@@ -347,194 +347,7 @@ app.get("/leaderboard", requireLogin, (req, res) => {
     });
 });
 
-app.get("/profile", requireLogin, (req, res) => {
-    let sql1 = `SELECT *
-                FROM Account
-                WHERE account_id = ?`;
-    db.get(sql1, [req.session.user.account_id], (err1, user) => {
-        if (err1) throw err1;
-        let sql2 = `SELECT * FROM Gamificate WHERE account_id = ?`;
-        db.get(sql2, [req.session.user.account_id], (err2, gamificate) => {
-            if (err2) throw err2;
-            res.render("profile", { profileUser: user, gamificate: gamificate || null, success: null });
-        });
-    });
-});
-
-app.post("/profile", requireLogin, (req, res) => {
-    let { username, email, password } = req.body;
-    let sql1 = `UPDATE Account
-                SET username = ?, email = ?, password = ?
-                WHERE account_id = ?`;
-    db.run(sql1, [username, email, password, req.session.user.account_id], (err) => {
-        if (err) throw err;
-        let sql2 = `SELECT *
-                    FROM Account
-                    WHERE account_id = ?`;
-        db.get(sql2, [req.session.user.account_id], (err1, user) => {
-            if (err1) throw err1;
-            req.session.user = user;
-            let sql3 = `SELECT *
-                        FROM Gamificate
-                        WHERE account_id = ?`;
-            db.get(sql3, [req.session.user.account_id], (err2, gamificate) => {
-                if (err2) throw err2;
-                res.render("profile", { profileUser: user, gamificate: gamificate || null, success: "บันทึกข้อมูลเรียบร้อย" });
-            });
-        });
-    });
-});
-
-app.get("/instructor", requireAdmin, (req, res) => {
-    let sql1 = `SELECT Course.*, Catagory.catagory_name,
-                (SELECT COUNT(*) FROM Content WHERE Content.course_id = Course.course_id) as content_count
-                FROM Course
-                JOIN Catagory
-                ON Course.catagory_id = Catagory.catagory_id`;
-    db.all(sql1, (err, courses) => {
-        if (err) throw err;
-        res.render("instructor", { courses: courses || [], success: req.query.success || null });
-    });
-});
-
-app.get("/instructor/create", requireAdmin, (req, res) => {
-    let sql1 = `SELECT *
-                FROM Catagory`;
-    db.all(sql1, (err, categories) => {
-        if (err) throw err;
-        res.render("instructor_create_course", { categories: categories || [] });
-    });
-});
-
-app.post("/instructor/create", requireAdmin, (req, res) => {
-    let { title, description, catagory_id } = req.body;
-    let sql1 = `INSERT INTO Course (title, description, catagory_id) VALUES
-                (?, ?, ?)`;
-    db.run(sql1, [title, description, catagory_id], (err) => {
-        if (err) throw err;
-        res.redirect("/instructor?success=created");
-    });
-});
-
-app.get("/instructor/edit/:courseId", requireAdmin, (req, res) => {
-    let courseId = req.params.courseId;
-    let sql1 = `SELECT *
-                FROM Course
-                WHERE course_id = ?`;
-    db.get(sql1, [courseId], (err1, course) => {
-        if (err1) throw err1;
-        if (!course) {
-            return res.redirect("/instructor");
-        }
-        let sql2 = `SELECT *
-                    FROM Content
-                    WHERE course_id = ?`;
-        db.all(sql2, [courseId], (err2, contents) => {
-            if (err2) throw err2;
-            let sql3 = `SELECT *
-                        FROM Catagory`;
-            db.all(sql3, (err3, categories) => {
-                if (err3) throw err3;
-                res.render("instructor_edit_course", { course, contents: contents || [], categories: categories || [], success: req.query.success || null });
-            });
-        });
-    });
-});
-
-app.post("/instructor/edit/:courseId", requireAdmin, (req, res) => {
-    let courseId = req.params.courseId;
-    let { title, description, catagory_id } = req.body;
-    let sql1 = `UPDATE Course
-                SET title = ?, description = ?, catagory_id = ?
-                WHERE course_id = ?`;
-    db.run(sql1, [title, description, catagory_id, courseId], (err) => {
-        if (err) throw err;
-        res.redirect(`/instructor/edit/${courseId}?success=updated`);
-    });
-});
-
-app.post("/instructor/delete/:courseId", requireAdmin, (req, res) => {
-    let courseId = req.params.courseId;
-    let sql1 = `DELETE FROM Progression
-                WHERE course_id = ?`;
-    db.run(sql1, [courseId], (err1) => {
-        if (err1) throw err1;
-        let sql2 = `DELETE FROM Library
-                    WHERE course_id = ?`;
-        db.run(sql2, [courseId], (err2) => {
-            if (err2) throw err2;
-            let sql3 = `DELETE FROM Content
-                        WHERE course_id = ?`;
-            db.run(sql3, [courseId], (err3) => {
-                if (err3) throw err3;
-                let sql4 = `DELETE FROM Course
-                            WHERE course_id = ?`;
-                db.run(sql4, [courseId], (err4) => {
-                    if (err4) throw err4;
-                    res.redirect("/instructor?success=deleted");
-                });
-            });
-        });
-    });
-});
-
-app.get("/instructor/create/:courseId", requireAdmin, (req, res) => {
-    res.render("instructor_create_content", { courseId: req.params.courseId });
-});
-
-app.post("/instructor/create/:courseId", requireAdmin, (req, res) => {
-    let courseId = req.params.courseId;
-    let { topic, content, Questions, A, B, C, D, Answer } = req.body;
-    let sql1 = `INSERT INTO Content (course_id, topic, content, Questions, A, B, C, D, Answer) VALUES
-                (?, ?, ?, ?, ?, ?, ?, ?, ?)`;
-    db.run(sql1, [courseId, topic, content, Questions, A, B, C, D, Answer], (err) => {
-        if (err) throw err;
-        res.redirect(`/instructor/edit/${courseId}?success=created`);
-    });
-});
-
-app.get("/instructor/edit/:courseId/:contentId", requireAdmin, (req, res) => {
-    let contentId = req.params.contentId;
-    let sql1 = `SELECT *
-                FROM Content
-                WHERE content_id = ?`;
-    db.get(sql1, [contentId], (err, content) => {
-        if (err) throw err;
-        if (!content) {
-            return res.redirect(`/instructor/edit/${req.params.courseId}`);
-        }
-        res.render("instructor_edit_content", { content, success: req.query.success || null });
-    });
-});
-
-app.post("/instructor/edit/:courseId/:contentId", requireAdmin, (req, res) => {
-    let { courseId, contentId } = req.params;
-    let { topic, content, Questions, A, B, C, D, Answer } = req.body;
-    let sql1 = `UPDATE Content
-                SET topic = ?, content = ?, Questions = ?, A = ?, B = ?, C = ?, D = ?, Answer = ?
-                WHERE content_id = ?`;
-    db.run(sql1, [topic, content, Questions, A, B, C, D, Answer, contentId], (err) => {
-        if (err) throw err;
-        res.redirect(`/instructor/edit/${courseId}?success=updated`);
-    });
-});
-
-app.post("/instructor/delete/:courseId/:contentId", requireAdmin, (req, res) => {
-    let { courseId, contentId } = req.params;
-    let sql1 = `DELETE FROM Progression
-                WHERE content_id = ?`;
-    db.run(sql1, [contentId], (err1) => {
-        if (err1) throw err1;
-        let sql2 = `DELETE FROM Content
-                    WHERE content_id = ?`;
-        db.run(sql2, [contentId], (err2) => {
-            if (err2) throw err2;
-            res.redirect(`/instructor/edit/${courseId}?success=deleted`);
-        });
-    });
-});
-
-app.get("/progression", requireLogin, (req, res) => {
+app.get("/progression", requireSignin, (req, res) => {
     let accountId = req.session.user.account_id;
     let sql1 = `SELECT Course.*, Catagory.catagory_name, Catagory.color
                 FROM Library
@@ -561,6 +374,193 @@ app.get("/progression", requireLogin, (req, res) => {
                 let completedIds = (progRows || []).map((r) => r.content_id);
                 res.render("progression", { courses: courses || [], contents: contents || [], completedIds });
             });
+        });
+    });
+});
+
+app.get("/profile", requireSignin, (req, res) => {
+    let sql1 = `SELECT *
+                FROM Account
+                WHERE account_id = ?`;
+    db.get(sql1, [req.session.user.account_id], (err1, user) => {
+        if (err1) throw err1;
+        let sql2 = `SELECT * FROM Gamificate WHERE account_id = ?`;
+        db.get(sql2, [req.session.user.account_id], (err2, gamificate) => {
+            if (err2) throw err2;
+            res.render("profile", { profileUser: user, gamificate: gamificate || null, success: null });
+        });
+    });
+});
+
+app.post("/profile", requireSignin, (req, res) => {
+    let { username, email, password } = req.body;
+    let sql1 = `UPDATE Account
+                SET username = ?, email = ?, password = ?
+                WHERE account_id = ?`;
+    db.run(sql1, [username, email, password, req.session.user.account_id], (err) => {
+        if (err) throw err;
+        let sql2 = `SELECT *
+                    FROM Account
+                    WHERE account_id = ?`;
+        db.get(sql2, [req.session.user.account_id], (err1, user) => {
+            if (err1) throw err1;
+            req.session.user = user;
+            let sql3 = `SELECT *
+                        FROM Gamificate
+                        WHERE account_id = ?`;
+            db.get(sql3, [req.session.user.account_id], (err2, gamificate) => {
+                if (err2) throw err2;
+                res.render("profile", { profileUser: user, gamificate: gamificate || null, success: "บันทึกข้อมูลเรียบร้อย" });
+            });
+        });
+    });
+});
+
+app.get("/instructor", requireInstructor, (req, res) => {
+    let sql1 = `SELECT Course.*, Catagory.catagory_name,
+                (SELECT COUNT(*) FROM Content WHERE Content.course_id = Course.course_id) as content_count
+                FROM Course
+                JOIN Catagory
+                ON Course.catagory_id = Catagory.catagory_id`;
+    db.all(sql1, (err, courses) => {
+        if (err) throw err;
+        res.render("instructor", { courses: courses || [], success: req.query.success || null });
+    });
+});
+
+app.get("/instructor/create", requireInstructor, (req, res) => {
+    let sql1 = `SELECT *
+                FROM Catagory`;
+    db.all(sql1, (err, categories) => {
+        if (err) throw err;
+        res.render("instructor_create_course", { categories: categories || [] });
+    });
+});
+
+app.post("/instructor/create", requireInstructor, (req, res) => {
+    let { title, description, catagory_id } = req.body;
+    let sql1 = `INSERT INTO Course (title, description, catagory_id) VALUES
+                (?, ?, ?)`;
+    db.run(sql1, [title, description, catagory_id], (err) => {
+        if (err) throw err;
+        res.redirect("/instructor?success=created");
+    });
+});
+
+app.get("/instructor/edit/:courseId", requireInstructor, (req, res) => {
+    let courseId = req.params.courseId;
+    let sql1 = `SELECT *
+                FROM Course
+                WHERE course_id = ?`;
+    db.get(sql1, [courseId], (err1, course) => {
+        if (err1) throw err1;
+        if (!course) {
+            return res.redirect("/instructor");
+        }
+        let sql2 = `SELECT *
+                    FROM Content
+                    WHERE course_id = ?`;
+        db.all(sql2, [courseId], (err2, contents) => {
+            if (err2) throw err2;
+            let sql3 = `SELECT *
+                        FROM Catagory`;
+            db.all(sql3, (err3, categories) => {
+                if (err3) throw err3;
+                res.render("instructor_edit_course", { course, contents: contents || [], categories: categories || [], success: req.query.success || null });
+            });
+        });
+    });
+});
+
+app.post("/instructor/edit/:courseId", requireInstructor, (req, res) => {
+    let courseId = req.params.courseId;
+    let { title, description, catagory_id } = req.body;
+    let sql1 = `UPDATE Course
+                SET title = ?, description = ?, catagory_id = ?
+                WHERE course_id = ?`;
+    db.run(sql1, [title, description, catagory_id, courseId], (err) => {
+        if (err) throw err;
+        res.redirect(`/instructor/edit/${courseId}?success=updated`);
+    });
+});
+
+app.post("/instructor/delete/:courseId", requireInstructor, (req, res) => {
+    let courseId = req.params.courseId;
+    let sql1 = `DELETE FROM Progression
+                WHERE course_id = ?`;
+    db.run(sql1, [courseId], (err1) => {
+        if (err1) throw err1;
+        let sql2 = `DELETE FROM Library
+                    WHERE course_id = ?`;
+        db.run(sql2, [courseId], (err2) => {
+            if (err2) throw err2;
+            let sql3 = `DELETE FROM Content
+                        WHERE course_id = ?`;
+            db.run(sql3, [courseId], (err3) => {
+                if (err3) throw err3;
+                let sql4 = `DELETE FROM Course
+                            WHERE course_id = ?`;
+                db.run(sql4, [courseId], (err4) => {
+                    if (err4) throw err4;
+                    res.redirect("/instructor?success=deleted");
+                });
+            });
+        });
+    });
+});
+
+app.get("/instructor/create/:courseId", requireInstructor, (req, res) => {
+    res.render("instructor_create_content", { courseId: req.params.courseId });
+});
+
+app.post("/instructor/create/:courseId", requireInstructor, (req, res) => {
+    let courseId = req.params.courseId;
+    let { topic, content, Questions, A, B, C, D, Answer } = req.body;
+    let sql1 = `INSERT INTO Content (course_id, topic, content, Questions, A, B, C, D, Answer) VALUES
+                (?, ?, ?, ?, ?, ?, ?, ?, ?)`;
+    db.run(sql1, [courseId, topic, content, Questions, A, B, C, D, Answer], (err) => {
+        if (err) throw err;
+        res.redirect(`/instructor/edit/${courseId}?success=created`);
+    });
+});
+
+app.get("/instructor/edit/:courseId/:contentId", requireInstructor, (req, res) => {
+    let contentId = req.params.contentId;
+    let sql1 = `SELECT *
+                FROM Content
+                WHERE content_id = ?`;
+    db.get(sql1, [contentId], (err, content) => {
+        if (err) throw err;
+        if (!content) {
+            return res.redirect(`/instructor/edit/${req.params.courseId}`);
+        }
+        res.render("instructor_edit_content", { content, success: req.query.success || null });
+    });
+});
+
+app.post("/instructor/edit/:courseId/:contentId", requireInstructor, (req, res) => {
+    let { courseId, contentId } = req.params;
+    let { topic, content, Questions, A, B, C, D, Answer } = req.body;
+    let sql1 = `UPDATE Content
+                SET topic = ?, content = ?, Questions = ?, A = ?, B = ?, C = ?, D = ?, Answer = ?
+                WHERE content_id = ?`;
+    db.run(sql1, [topic, content, Questions, A, B, C, D, Answer, contentId], (err) => {
+        if (err) throw err;
+        res.redirect(`/instructor/edit/${courseId}?success=updated`);
+    });
+});
+
+app.post("/instructor/delete/:courseId/:contentId", requireInstructor, (req, res) => {
+    let { courseId, contentId } = req.params;
+    let sql1 = `DELETE FROM Progression
+                WHERE content_id = ?`;
+    db.run(sql1, [contentId], (err1) => {
+        if (err1) throw err1;
+        let sql2 = `DELETE FROM Content
+                    WHERE content_id = ?`;
+        db.run(sql2, [contentId], (err2) => {
+            if (err2) throw err2;
+            res.redirect(`/instructor/edit/${courseId}?success=deleted`);
         });
     });
 });
