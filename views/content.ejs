@@ -37,7 +37,7 @@
                 <p class="text-xs text-gray-600"><%= !user ? 'เข้าสู่ระบบ' : 'เพิ่มเข้าคลัง' %></p>
             </div>
             <% } else { %>
-            <details class="bg-white border shadow-md rounded-xl mb-3 overflow-hidden group">
+            <details class="bg-white border shadow-md rounded-xl mb-3 overflow-hidden group" <%= activeContentId == item.content_id ? 'open' : '' %>>
                 <summary class="flex items-center gap-3 px-5 py-4">
                     <p class="w-8 h-8 flex items-center justify-center rounded-full text-xs <%= isDone ? 'bg-green-600' : 'bg-gray-800' %> text-white"><%= index + 1 %></p>
                     <p class="text-sm flex-1"><%= item.topic %></p>
@@ -48,16 +48,17 @@
                         <p class="text-sm text-gray-800 mb-4"><%= item.Questions %></p>
                         <form method="POST" action="/library/<%= course.course_id %>/<%= item.content_id %>" onsubmit="return confirm('ยืนยันตัวเลือกใช่หรือไม่')">
                             <div class="grid grid-cols-1 gap-2 mb-3">
-                                <% [['A', item.A], ['B', item.B], ['C', item.C], ['D', item.D]].forEach(([key, val]) => { %>
+                                <% let options = [['A', item.A], ['B', item.B], ['C', item.C], ['D', item.D]]; %>
+                                <% for (let o = 0; o < options.length; o++) { %>
                                 <label class="flex items-center gap-2 text-sm text-gray-600">
-                                    <input type="radio" name="answer" value="<%= key %>"/>
-                                    <span><%= key %>.</span><%= val %>
+                                    <input type="radio" name="answer" value="<%= options[o][0] %>"/>
+                                    <span><%= options[o][0] %>.</span><%= options[o][1] %>
                                 </label>
-                                <% }); %>
+                                <% } %>
                             </div>
                             <button type="submit" class="mt-1 text-xs bg-blue-600 text-white px-4 py-3 rounded-xl w-full">ส่งคำตอบ</button>
                         </form>
-                        <% if (result && activeContent && activeContent.content_id == item.content_id) { %>
+                        <% if (result && activeContentId == item.content_id) { %>
                         <p class="text-xs mt-2 <%= result == 'correct' ? 'text-green-600' : 'text-red-600' %>"><%= result == 'correct' ? 'ถูกต้อง +10 XP' : 'ผิด ลองใหม่อีกครั้ง' %></p>
                         <% } %>
                     </div>

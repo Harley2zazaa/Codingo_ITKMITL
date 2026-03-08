@@ -40,5 +40,10 @@
             </table>
         </div>
     </div>
+    <% if (success === 'created') { %>
+    <script>alert("เพิ่มบทเรียนสำเร็จ");</script>
+    <% } else if (success === 'deleted') { %>
+    <script>alert("ลบบทเรียนสำเร็จ");</script>
+    <% } %>
 </body>
 </html>

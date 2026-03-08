@@ -5,6 +5,7 @@
     <title>โปรไฟล์ - Codingo</title>
 </head>
 <body class="bg-white">
+    <%- include("partials/header") %>
     <div class="flex items-center justify-center p-6 min-h-screen">
         <div class="w-full max-w-lg">
             <a href="/home" class="text-sm text-gray-600 mb-6 inline-block"><-- ย้อนกลับ</a>
@@ -16,7 +17,7 @@
                     <div>
                         <p class="text-gray-800"><%= profileUser.username %></p>
                         <p class="text-sm text-gray-600"><%= profileUser.email %></p>
-                        <p class="text-xs text-gray-600 mt-1">XP <span class="text-orange-600 text-sm"><%= gamificate.xp %></span> · เลเวล <span class="text-blue-600 text-sm"><%= gamificate.level %></span></p>
+                        <p class="text-xs text-gray-600 mt-1">XP <span class="text-orange-600 text-sm"><%= gamificate ? gamificate.xp : '-' %></span> · เลเวล <span class="text-blue-600 text-sm"><%= gamificate ? gamificate.level : '-' %></span></p>
                     </div>
                 </div>
                 <% if (user.role == "student") { %>
@@ -46,5 +47,8 @@
             </div>
         </div>
     </div>
+    <% if (success) { %>
+    <script>alert("บันทึกข้อมูลเรียบร้อย");</script>
+    <% } %>
 </body>
 </html>

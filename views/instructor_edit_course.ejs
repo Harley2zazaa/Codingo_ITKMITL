@@ -50,5 +50,12 @@
             <% }); %>
         </div>
     </div>
+    <% if (success === 'updated') { %>
+    <script>alert("บันทึกบทเรียนสำเร็จ");</script>
+    <% } else if (success === 'created') { %>
+    <script>alert("เพิ่มเนื้อหาสำเร็จ");</script>
+    <% } else if (success === 'deleted') { %>
+    <script>alert("ลบเนื้อหาสำเร็จ");</script>
+    <% } %>
 </body>
 </html>
