@@ -85,8 +85,8 @@ app.post("/signin", (req, res) => {
                         SET last_active = DATE(DATETIME('now', '+7 hours')),
                         streak = ?
                         WHERE account_id = ?`;
-            db.run(sql3, [newStreak, user.account_id], (err) => {
-                if (err) throw err;
+            db.run(sql3, [newStreak, user.account_id], (err3) => {
+                if (err3) throw err3;
                 req.session.user = user;
                 res.redirect("/streak");
             });
@@ -141,8 +141,8 @@ app.get("/streak", requireSignin, (req, res) => {
     let sql1 = `SELECT *
                 FROM Gamificate
                 WHERE account_id = ?`;
-    db.get(sql1, [req.session.user.account_id], (err, gamificate) => {
-        if (err) throw err;
+    db.get(sql1, [req.session.user.account_id], (err1, gamificate) => {
+        if (err1) throw err1;
         res.render("streak", { gamificate });
     });
 });
@@ -157,8 +157,8 @@ app.get("/course", (req, res) => {
                 FROM Course
                 JOIN Catagory
                 ON Course.catagory_id = Catagory.catagory_id`;
-    db.all(sql1, (err, courses) => {
-        if (err) throw err;
+    db.all(sql1, (err1, courses) => {
+        if (err1) throw err1;
         res.render("course", { courses: courses || [], search: "" });
     });
 });
@@ -170,8 +170,8 @@ app.post("/course", (req, res) => {
                 JOIN Catagory
                 ON Course.catagory_id = Catagory.catagory_id
                 WHERE Course.title LIKE ? OR Catagory.catagory_name LIKE ?`;
-    db.all(sql1, [`%${search}%`, `%${search}%`], (err, courses) => {
-        if (err) throw err;
+    db.all(sql1, [`%${search}%`, `%${search}%`], (err1, courses) => {
+        if (err1) throw err1;
         res.render("course", { courses: courses || [], search });
     });
 });
@@ -215,15 +215,15 @@ app.post("/course/add/:courseId", requireSignin, (req, res) => {
     let sql1 = `SELECT *
                 FROM Library
                 WHERE account_id = ? AND course_id = ?`;
-    db.get(sql1, [req.session.user.account_id, courseId], (err, existing) => {
-        if (err) throw err;
+    db.get(sql1, [req.session.user.account_id, courseId], (err1, existing) => {
+        if (err1) throw err1;
         if (existing) {
             return res.redirect(`/library/${courseId}`);
         }
         let sql2 = `INSERT INTO Library (account_id, course_id) VALUES
                     (?, ?)`;
-        db.run(sql2, [req.session.user.account_id, courseId], (err) => {
-            if (err) throw err;
+        db.run(sql2, [req.session.user.account_id, courseId], (err2) => {
+            if (err2) throw err2;
             res.redirect(`/library/${courseId}`);
         });
     });
@@ -239,8 +239,8 @@ app.get("/library", requireSignin, (req, res) => {
                 JOIN Catagory
                 ON Course.catagory_id = Catagory.catagory_id
                 WHERE Library.account_id = ?`;
-    db.all(sql1, [req.session.user.account_id, req.session.user.account_id], (err, courses) => {
-        if (err) throw err;
+    db.all(sql1, [req.session.user.account_id, req.session.user.account_id], (err1, courses) => {
+        if (err1) throw err1;
         res.render("library", { courses: courses || [] });
     });
 });
@@ -284,7 +284,8 @@ app.get("/library/:courseId", requireSignin, (req, res) => {
 app.post("/library/remove/:courseId", requireSignin, (req, res) => {
     let sql1 = `DELETE FROM Library
                 WHERE account_id = ? AND course_id = ?`;
-    db.run(sql1, [req.session.user.account_id, req.params.courseId], () => {
+    db.run(sql1, [req.session.user.account_id, req.params.courseId], (err1) => {
+        if (err1) throw err1;
         res.redirect("/library");
     });
 });
@@ -312,16 +313,18 @@ app.post("/library/:courseId/:contentId", requireSignin, (req, res) => {
             }
             let sql3 = `INSERT INTO Progression (account_id, course_id, content_id, completed)
                         VALUES (?, ?, ?, 1)`;
-            db.run(sql3, [accountId, courseId, contentId], () => {
+            db.run(sql3, [accountId, courseId, contentId], (err3) => {
+                if (err3) throw err3;
                 let sql4 = `UPDATE Gamificate
                             SET xp = xp + 10, level = (xp + 10) / 50
                             WHERE account_id = ?`;
-                db.run(sql4, [accountId], () => {
+                db.run(sql4, [accountId], (err4) => {
+                    if (err4) throw err4;
                     let sql5 = `SELECT *
                                 FROM Account
                                 WHERE account_id = ?`;
-                    db.get(sql5, [accountId], (err3, updUser) => {
-                        if (err3) throw err3;
+                    db.get(sql5, [accountId], (err5, updUser) => {
+                        if (err5) throw err5;
                         req.session.user = updUser;
                         res.redirect(`/library/${courseId}?content=${contentId}&result=correct`);
                     });
@@ -341,8 +344,8 @@ app.get("/leaderboard", requireSignin, (req, res) => {
                 WHERE Account.role = "student"
                 ORDER BY xp DESC
                 LIMIT 10`;
-    db.all(sql1, (err, accounts) => {
-        if (err) throw err;
+    db.all(sql1, (err1, accounts) => {
+        if (err1) throw err1;
         res.render("leaderboard", { accounts: accounts || [] });
     });
 });
@@ -397,19 +400,19 @@ app.post("/profile", requireSignin, (req, res) => {
     let sql1 = `UPDATE Account
                 SET username = ?, email = ?, password = ?
                 WHERE account_id = ?`;
-    db.run(sql1, [username, email, password, req.session.user.account_id], (err) => {
-        if (err) throw err;
+    db.run(sql1, [username, email, password, req.session.user.account_id], (err1) => {
+        if (err1) throw err1;
         let sql2 = `SELECT *
                     FROM Account
                     WHERE account_id = ?`;
-        db.get(sql2, [req.session.user.account_id], (err1, user) => {
-            if (err1) throw err1;
+        db.get(sql2, [req.session.user.account_id], (err2, user) => {
+            if (err2) throw err2;
             req.session.user = user;
             let sql3 = `SELECT *
                         FROM Gamificate
                         WHERE account_id = ?`;
-            db.get(sql3, [req.session.user.account_id], (err2, gamificate) => {
-                if (err2) throw err2;
+            db.get(sql3, [req.session.user.account_id], (err3, gamificate) => {
+                if (err3) throw err3;
                 res.render("profile", { profileUser: user, gamificate: gamificate || null, success: "บันทึกข้อมูลเรียบร้อย" });
             });
         });
@@ -422,8 +425,8 @@ app.get("/instructor", requireInstructor, (req, res) => {
                 FROM Course
                 JOIN Catagory
                 ON Course.catagory_id = Catagory.catagory_id`;
-    db.all(sql1, (err, courses) => {
-        if (err) throw err;
+    db.all(sql1, (err1, courses) => {
+        if (err1) throw err1;
         res.render("instructor", { courses: courses || [], success: req.query.success || null });
     });
 });
@@ -431,8 +434,8 @@ app.get("/instructor", requireInstructor, (req, res) => {
 app.get("/instructor/create", requireInstructor, (req, res) => {
     let sql1 = `SELECT *
                 FROM Catagory`;
-    db.all(sql1, (err, categories) => {
-        if (err) throw err;
+    db.all(sql1, (err1, categories) => {
+        if (err1) throw err1;
         res.render("instructor_create_course", { categories: categories || [] });
     });
 });
@@ -441,8 +444,8 @@ app.post("/instructor/create", requireInstructor, (req, res) => {
     let { title, description, catagory_id } = req.body;
     let sql1 = `INSERT INTO Course (title, description, catagory_id) VALUES
                 (?, ?, ?)`;
-    db.run(sql1, [title, description, catagory_id], (err) => {
-        if (err) throw err;
+    db.run(sql1, [title, description, catagory_id], (err1) => {
+        if (err1) throw err1;
         res.redirect("/instructor?success=created");
     });
 });
@@ -478,8 +481,8 @@ app.post("/instructor/edit/:courseId", requireInstructor, (req, res) => {
     let sql1 = `UPDATE Course
                 SET title = ?, description = ?, catagory_id = ?
                 WHERE course_id = ?`;
-    db.run(sql1, [title, description, catagory_id, courseId], (err) => {
-        if (err) throw err;
+    db.run(sql1, [title, description, catagory_id, courseId], (err1) => {
+        if (err1) throw err1;
         res.redirect(`/instructor/edit/${courseId}?success=updated`);
     });
 });
@@ -518,8 +521,8 @@ app.post("/instructor/create/:courseId", requireInstructor, (req, res) => {
     let { topic, content, Questions, A, B, C, D, Answer } = req.body;
     let sql1 = `INSERT INTO Content (course_id, topic, content, Questions, A, B, C, D, Answer) VALUES
                 (?, ?, ?, ?, ?, ?, ?, ?, ?)`;
-    db.run(sql1, [courseId, topic, content, Questions, A, B, C, D, Answer], (err) => {
-        if (err) throw err;
+    db.run(sql1, [courseId, topic, content, Questions, A, B, C, D, Answer], (err1) => {
+        if (err1) throw err1;
         res.redirect(`/instructor/edit/${courseId}?success=created`);
     });
 });
@@ -529,8 +532,8 @@ app.get("/instructor/edit/:courseId/:contentId", requireInstructor, (req, res) =
     let sql1 = `SELECT *
                 FROM Content
                 WHERE content_id = ?`;
-    db.get(sql1, [contentId], (err, content) => {
-        if (err) throw err;
+    db.get(sql1, [contentId], (err1, content) => {
+        if (err1) throw err1;
         if (!content) {
             return res.redirect(`/instructor/edit/${req.params.courseId}`);
         }
@@ -544,8 +547,8 @@ app.post("/instructor/edit/:courseId/:contentId", requireInstructor, (req, res) 
     let sql1 = `UPDATE Content
                 SET topic = ?, content = ?, Questions = ?, A = ?, B = ?, C = ?, D = ?, Answer = ?
                 WHERE content_id = ?`;
-    db.run(sql1, [topic, content, Questions, A, B, C, D, Answer, contentId], (err) => {
-        if (err) throw err;
+    db.run(sql1, [topic, content, Questions, A, B, C, D, Answer, contentId], (err1) => {
+        if (err1) throw err1;
         res.redirect(`/instructor/edit/${courseId}?success=updated`);
     });
 });
