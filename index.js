@@ -38,7 +38,7 @@ function requireInstructor(req, res, next) {
     if (!req.session.user) {
         return res.redirect("/signin");
     }
-    if (req.session.user.role != "admin") {
+    if (req.session.user.role != "instructor") {
         return res.redirect("/home");
     }
     next();
@@ -135,7 +135,7 @@ app.post("/register", (req, res) => {
 });
 
 app.get("/streak", requireSignin, (req, res) => {
-    if (req.session.user.role == "admin") {
+    if (req.session.user.role == "instructor") {
         return res.redirect("/home");
     }
     let sql1 = `SELECT *
