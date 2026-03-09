@@ -81,3 +81,18 @@ Type this URL in search bar and enter
 ```
 http://localhost:3000
 ```
+
+## Example accounts
+
+### Sign-in
+
+This is mock-up email address
+
+| Role       | Username   | Email                 | Password  |
+| :--------- |:-----------|:----------------------|:----------|
+| student    | sarin      | `sarin@mail.com`      | cisco     |
+| instructor | instructor | `instructor@mail.com` | class     |
+
+### Register
+
+Create your own account and remember it
