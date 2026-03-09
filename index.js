@@ -286,7 +286,7 @@ app.post("/library/remove/:courseId", requireSignin, (req, res) => {
                 WHERE account_id = ? AND course_id = ?`;
     db.run(sql1, [req.session.user.account_id, req.params.courseId], (err1) => {
         if (err1) throw err1;
-        res.redirect("/library");
+        res.redirect(`/course/${req.params.courseId}`);
     });
 });
 
@@ -560,7 +560,7 @@ app.post("/instructor/edit/:courseId/:contentId", requireInstructor, (req, res) 
                 WHERE content_id = ?`;
     db.run(sql1, [topic, content, Questions, A, B, C, D, Answer, contentId], (err1) => {
         if (err1) throw err1;
-        res.redirect(`/instructor/edit/${courseId}?success=updated`);
+        res.redirect(`/instructor/edit/${courseId}/${contentId}?success=updated`);
     });
 });
 
