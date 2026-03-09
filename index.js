@@ -80,12 +80,12 @@ app.post("/signin", (req, res) => {
                 req.session.user = user;
                 return res.redirect("/home");
             }
-            newStreak = lastActive == yesterday ? newStreak + 1 : 1;
+            newStreak = lastActive == yesterday ? newStreak + 1 : 0;
             let sql3 = `UPDATE Gamificate
-                        SET last_active = DATE(DATETIME('now', '+7 hours')),
+                        SET last_active = ?,
                         streak = ?
                         WHERE account_id = ?`;
-            db.run(sql3, [newStreak, user.account_id], (err3) => {
+            db.run(sql3, [today, newStreak, user.account_id], (err3) => {
                 if (err3) throw err3;
                 req.session.user = user;
                 res.redirect("/streak");
