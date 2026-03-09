@@ -9,7 +9,7 @@
     <div class="max-w-4xl mx-auto p-6 pt-24 min-h-screen">
         <a href="/instructor" class="text-sm text-gray-600 mb-6 inline-block"><-- ย้อนกลับ</a>
         <h1 class="text-3xl text-gray-800 mb-1">แก้ไขบทเรียน</h1>
-        <p class="text-gray-600 mb-6">แก้ไขบทเรียน, เพิ่ม แก้ไข และลบเนื้อหาในระบบ</p>
+        <p class="text-gray-600 mb-6">แก้ไขบทเรียน, สร้าง แก้ไข และลบเนื้อหาในระบบ</p>
         <div class="bg-white border rounded-xl p-8 mb-8 shadow-md">
             <form action="/instructor/edit/<%= course.course_id %>" method="POST" onsubmit="return confirm('บันทึกข้อมูลใช่หรือไม่')">
                 <div class="mb-4">
@@ -33,7 +33,7 @@
         </div>
         <div class="flex items-center justify-between mb-4">
             <h2 class="text-lg">เนื้อหาทั้งหมด <%= contents.length %> หัวข้อ</h2>
-            <a href="/instructor/create/<%= course.course_id %>" class="bg-green-600 text-white px-4 py-3 rounded-xl text-sm">เพิ่มเนื้อหา</a>
+            <a href="/instructor/create/<%= course.course_id %>" class="bg-green-600 text-white px-4 py-3 rounded-xl text-sm">สร้างเนื้อหา</a>
         </div>
         <div class="flex flex-col">
             <% contents.forEach((item, index) => { %>
@@ -51,9 +51,9 @@
         </div>
     </div>
     <% if (success === 'updated') { %>
-    <script>alert("บันทึกบทเรียนสำเร็จ");</script>
+    <script>alert("บันทึกการแก้ไขบทเรียนสำเร็จ");</script>
     <% } else if (success === 'created') { %>
-    <script>alert("เพิ่มเนื้อหาสำเร็จ");</script>
+    <script>alert("สร้างเนื้อหาสำเร็จ");</script>
     <% } else if (success === 'deleted') { %>
     <script>alert("ลบเนื้อหาสำเร็จ");</script>
     <% } %>

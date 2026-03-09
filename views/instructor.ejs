@@ -10,9 +10,9 @@
         <div class="flex items-center justify-between mb-8">
             <div>
                 <h1 class="text-gray-800 text-3xl">จัดการบทเรียน</h1>
-                <p class="text-gray-600 mt-1">เพิ่ม แก้ไข และลบบทเรียนในระบบ</p>
+                <p class="text-gray-600 mt-1">สร้าง แก้ไข และลบบทเรียนในระบบ</p>
             </div>
-            <a href="/instructor/create" class="bg-green-600 text-white px-5 py-3 rounded-xl text-sm">เพิ่มบทเรียน</a>
+            <a href="/instructor/create" class="bg-green-600 text-white px-5 py-3 rounded-xl text-sm">สร้างบทเรียน</a>
         </div>
         <div class="bg-white border rounded-xl overflow-hidden">
             <table class="w-full text-sm">
@@ -41,7 +41,7 @@
         </div>
     </div>
     <% if (success === 'created') { %>
-    <script>alert("เพิ่มบทเรียนสำเร็จ");</script>
+    <script>alert("สร้างบทเรียนสำเร็จ");</script>
     <% } else if (success === 'deleted') { %>
     <script>alert("ลบบทเรียนสำเร็จ");</script>
     <% } %>
