@@ -6,7 +6,7 @@
         <a href="/library" class="text-gray-800 text-sm">คลัง</a>
         <a href="/progression" class="text-gray-800 text-sm">ความก้าวหน้า</a>
         <a href="/leaderboard" class="text-gray-800 text-sm">อันดับ</a>
-        <% if (user.role == "admin") { %>
+        <% if (user.role == "instructor") { %>
         <a href="/instructor" class="text-gray-800 text-sm">จัดการบทเรียน</a>
         <% } %>
         <a href="/profile" class="flex items-center justify-center w-10 h-10 rounded-full bg-gray-800 text-white text-xs"><%= user.username[0].toUpperCase() %></a>
