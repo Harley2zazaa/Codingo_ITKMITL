@@ -23,7 +23,7 @@
             </form>
             <% } %>
             <% } else { %>
-            <a href="/signin" class="inline-block bg-gray-800 text-white text-sm px-4 py-3 rounded-xl">เข้าสู่ระบบ</a>
+            <a href="/signin" class="inline-block bg-gray-800 text-white text-sm px-4 py-3 rounded-xl">ลงชื่อเข้าใช้</a>
             <% } %>
         </div>
         <h2 class="text-lg mb-4">เนื้อหาในบทเรียน <%= contents.length %> หัวข้อ</h2>
@@ -34,7 +34,7 @@
             <div class="flex items-center gap-3 px-5 py-4 bg-white border shadow-md rounded-xl mb-3">
                 <p class="w-8 h-8 flex items-center justify-center rounded-full text-xs bg-gray-800 text-white"><%= index + 1 %></p>
                 <p class="text-sm flex-1 text-gray-800"><%= item.topic %></p>
-                <p class="text-xs text-gray-600"><%= !user ? 'เข้าสู่ระบบ' : 'เพิ่มเข้าคลัง' %></p>
+                <p class="text-xs text-gray-600"><%= !user ? 'ลงชื่อเข้าใช้' : 'เพิ่มเข้าคลัง' %></p>
             </div>
             <% } else { %>
             <details class="bg-white border shadow-md rounded-xl mb-3 overflow-hidden group" <%= activeContentId == item.content_id ? 'open' : '' %>>
