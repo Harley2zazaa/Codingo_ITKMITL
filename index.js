@@ -100,6 +100,8 @@ app.get("/register", (req, res) => {
 
 app.post("/register", (req, res) => {
     let { username, email, password } = req.body;
+    username = username.trim();
+    email = email.trim();
     let sql1 = `SELECT *
                 FROM Account
                 WHERE username = ? OR email = ?`;
