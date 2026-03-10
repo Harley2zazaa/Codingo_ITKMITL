@@ -50,9 +50,13 @@ git clone https://github.com/Harley2zazaa/Codingo_ITKMITL.git
 
 ## Getting Start
 
+Open your ```Terminal``` and go this project folder where this project file downloaded on your device
+
+***You can go to Run project section if you don't need reinstall***
+
 ### Setting up
 
-Open your ```Terminal``` and go this project folder where this project file downloaded on your device and run
+run this command
 
 ```sh
 npm init -y
@@ -63,7 +67,7 @@ npm init -y
 After previous part then run
 
 ```sh
-npm install express ejs sqlite3 express-session
+npm install nodemon express ejs sqlite3 express-session
 ```
 
 ### Run project
@@ -74,13 +78,17 @@ Start local server
 nodemon index.js
 ```
 
-### Choose a browser (Your favorite browser option)
+### Choose a browser
 
 Type this URL in search bar and enter
 
 ```
 http://localhost:3000
 ```
+
+### IF YOU LAZY...
+
+Use [run.bat file](run.bat) in folder, it will do every step by step. Click it and enjoy
 
 ## Example accounts
 
