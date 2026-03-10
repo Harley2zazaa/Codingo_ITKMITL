@@ -88,10 +88,10 @@ http://localhost:3000
 
 This is mock-up email address
 
-| Role       | Username   | Email                 | Password  |
-| :--------- |:-----------|:----------------------|:----------|
-| student    | sarin      | `sarin@mail.com`      | cisco     |
-| instructor | instructor | `instructor@mail.com` | class     |
+| Role       | Username | Email             | Password |
+|:-----------|:---------|:------------------|:---------|
+| student    | `sarin`  | `sarin@mail.com`  | `cisco`  |
+| instructor | `arjarn` | `arjarn@mail.com` | `class`  |
 
 ### Register
 
