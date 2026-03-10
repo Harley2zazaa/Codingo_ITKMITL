@@ -127,7 +127,7 @@ app.post("/register", (req, res) => {
                 db.get(sql4, [newAccountId], (err2, user) => {
                     if (err2) throw err2;
                     req.session.user = user;
-                    res.redirect("/home");
+                    res.redirect("/streak");
                 });
             });
         });
