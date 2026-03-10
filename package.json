@@ -1,18 +1,25 @@
 {
-  "name": "codlingo_kmitl",
+  "name": "codingo_itkmitl",
   "version": "1.0.0",
-  "description": "",
+  "description": "<p align=\"center\">\r     <img width=1000 height=auto src=\"/public/img/codingo_logo.png\">\r </p>",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Harley2zazaa/Codingo_ITKMITL.git"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/Harley2zazaa/Codingo_ITKMITL/issues"
+  },
+  "homepage": "https://github.com/Harley2zazaa/Codingo_ITKMITL#readme",
   "dependencies": {
-    "bcryptjs": "^3.0.3",
-    "ejs": "^4.0.1",
+    "ejs": "^5.0.1",
     "express": "^5.2.1",
     "express-session": "^1.19.0",
     "sqlite3": "^5.1.7"
