@@ -20,17 +20,20 @@
             <p class="text-gray-600 text-md mb-10">
                 "<% let streak = gamificate.streak;
                     let message = "";
-                    if (streak <= 1) {
+                    if (streak < 1) {
                         message = "<del>NOOB</del> KEEP UP";
                     }
                     else if (streak < 7) {
                         message = "PRO";
                     }
-                    else if (streak < 30) {
+                    else if (streak < 15) {
                         message = "HACK";
                     }
-                    else {
+                    else if (streak < 30) {
                         message = "GOD";
+                    }
+                    else {
+                        message = "????";
                     } %>
                 <%- message %>" - Sarin said.
             </p>
