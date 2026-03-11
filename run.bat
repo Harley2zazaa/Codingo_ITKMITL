@@ -6,6 +6,6 @@ for /f "tokens=5" %%a in ('netstat -aon ^| findstr :3000 ^| findstr "LISTENING"'
 
 start "" cmd /c "timeout /t 2 /nobreak >nul && start http://localhost:3000"
 
-npx nodemon index.js
+nodemon index.js || npx nodemon index.js
 
 pause
