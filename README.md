@@ -50,11 +50,31 @@ git clone https://github.com/Harley2zazaa/Codingo_ITKMITL.git
 
 ## Getting Start
 
+### First method
+
 Open your ```Terminal``` and go this project folder where this project file downloaded on your device
 
-***You can go to Run project section if you don't need reinstall***
+**Start local server**
 
-### Setting up
+```sh
+nodemon index.js
+```
+
+**Open web browser, type this URL in search bar and enter**
+
+```
+http://localhost:3000
+```
+
+### Second method
+
+Use [run.bat file](run.bat) in folder, it will do every step by step. Click it and enjoy
+
+## For development
+
+***Start without node_module and .json file, follow this step***
+
+### Initialize
 
 run this command
 
@@ -70,26 +90,6 @@ After previous part then run
 npm install nodemon express ejs sqlite3 express-session
 ```
 
-### Run project
-
-Start local server
-
-```sh
-nodemon index.js
-```
-
-### Choose a browser
-
-Type this URL in search bar and enter
-
-```
-http://localhost:3000
-```
-
-### IF YOU LAZY...
-
-Use [run.bat file](run.bat) in folder, it will do every step by step. Click it and enjoy
-
 ## Example accounts
 
 ### Sign-in
@@ -103,9 +103,19 @@ This is mock-up email address
 | admin      | `support` | `support@mail.com` | `hello`  |
 
 **student** add and remove course, learning and quiz each content
+
 **instructor** create, edit and delete course/content
+
 **admin** edit and delete account
 
 ### Register
 
 Create your own account and remember it
+
+## Contributors
+
+- [GEOFFCHARGE](https://github.com/GEOFFCHARGE) Back-end Developer
+- [Sarin-Z](https://github.com/Sarin-Z) Front-end Developer
+- [AnawinA](https://github.com/AnawinA) Graphic Designer
+- [Power05ya](https://github.com/Power05ya) Web Designer
+- [Harley2zazaa](https://github.com/Harley2zazaa) Project Manager
