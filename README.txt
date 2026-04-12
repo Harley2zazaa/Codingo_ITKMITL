@@ -14,3 +14,8 @@
       ชื่อผู้ใช้: arjarn
       อีเมล: arjarn@mail.com
       รหัสผ่าน: class
+
+   2) actor: admin
+      ชื่อผู้ใช้: support
+      อีเมล: support@mail.com
+      รหัสผ่าน: sanfran

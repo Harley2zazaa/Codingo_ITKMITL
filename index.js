@@ -44,6 +44,16 @@ function requireInstructor(req, res, next) {
     next();
 }
 
+function requireAdmin(req, res, next) {
+    if (!req.session.user) {
+        return res.redirect("/signin");
+    }
+    if (req.session.user.role != "admin") {
+        return res.redirect("/home");
+    }
+    next();
+}
+
 app.get("/", (req, res) => {
     res.redirect("/home");
 });
@@ -137,7 +147,7 @@ app.post("/register", (req, res) => {
 });
 
 app.get("/streak", requireSignin, (req, res) => {
-    if (req.session.user.role == "instructor") {
+    if (req.session.user.role != "student") {
         return res.redirect("/home");
     }
     let sql1 = `SELECT *
@@ -149,7 +159,7 @@ app.get("/streak", requireSignin, (req, res) => {
     });
 });
 
-app.get("/signout", (req, res) => {
+app.get("/signout", requireSignin, (req, res) => {
     req.session.destroy();
     res.redirect("/home");
 });
@@ -577,6 +587,121 @@ app.post("/instructor/delete/:courseId/:contentId", requireInstructor, (req, res
         db.run(sql2, [contentId], (err2) => {
             if (err2) throw err2;
             res.redirect(`/instructor/edit/${courseId}?success=deleted`);
+        });
+    });
+});
+
+app.get("/admin", requireAdmin, (req, res) => {
+    let sql1 = `SELECT *
+                FROM Account
+                WHERE role != "admin"
+                ORDER BY role, username;`;
+    db.all(sql1, (err1, accounts) => {
+        if (err1) throw err1;
+        res.render("admin", { accounts: accounts || [], success: req.query.success || null });
+    });
+});
+
+app.get("/admin/create", requireAdmin, (req, res) => {
+    res.render("admin_create_account", { error: null });
+});
+
+app.post("/admin/create", requireAdmin, (req, res) => {
+    let { username, email, password, role } = req.body;
+    username = username.trim();
+    email = email.trim();
+    let sql1 = `SELECT *
+                FROM Account
+                WHERE username = ? OR email = ?`;
+    db.all(sql1, [username, email], (err1, existing) => {
+        if (err1) throw err1;
+        if (existing.length > 0) {
+            return res.render("admin_create_account", { error: "ชื่อผู้ใช้ หรืออีเมลนี้มีในระบบแล้ว" });
+        }
+        let sql2 = `INSERT INTO Account (username, email, password, role) VALUES
+                    (?, ?, ?, ?)`;
+        db.run(sql2, [username, email, password, role], function (err2) {
+            if (err2) {
+                return res.render("admin_create_account", { error: "เกิดข้อผิดพลาด" });
+            }
+            let newAccountId = this.lastID;
+            let sql3 = `INSERT INTO Gamificate (account_id, xp, last_active, level, streak) VALUES
+                        (?, 0, DATE(DATETIME('now', '+7 hours')), 0, 0)`;
+            db.run(sql3, [newAccountId], (err3) => {
+                if (err3) {
+                    return res.render("admin_create_account", { error: "เกิดข้อผิดพลาด" });
+                }
+                let sql4 = `SELECT *
+                            FROM Account
+                            WHERE account_id = ?`;
+                db.get(sql4, [newAccountId], (err4, user) => {
+                    if (err4) throw err4;
+                    res.redirect("/admin?success=created");
+                });
+            });
+        });
+    });
+});
+
+app.get("/admin/edit/:accountId", requireAdmin, (req, res) => {
+    let accountId = req.params.accountId;
+    let sql1 = `SELECT *
+                FROM Account
+                WHERE account_id = ?`;
+    db.get(sql1, [accountId], (err1, user) => {
+        if (err1) throw err1;
+        res.render("admin_edit_account", { profileUser: user, success: null, error: null });
+    });
+});
+
+app.post("/admin/edit/:accountId", requireAdmin, (req, res) => {
+    let accountId = req.params.accountId;
+    let { username, email, password, role } = req.body;
+    let sql1 = `SELECT *
+                FROM Account
+                WHERE (email = ? OR username = ?) AND account_id != ?`;
+    db.all(sql1, [email, username, accountId], (err1, existing) => {
+        if (err1) throw err1;
+        if (existing.length > 0) {
+            return res.redirect(`/admin/edit/${accountId}?error=ชื่อผู้ใช้ หรืออีเมลนี้มีในระบบแล้ว`);
+        }
+        let sql2 = `UPDATE Account
+                    SET username = ?, email = ?, password = ?, role = ?
+                    WHERE account_id = ?`;
+        db.run(sql2, [username, email, password, role, accountId], (err2) => {
+            if (err2) throw err2;
+            let sql3 = `SELECT *
+                        FROM Account
+                        WHERE account_id = ?`;
+            db.get(sql3, [accountId], (err3, user) => {
+                if (err3) throw err3;
+                res.render("admin_edit_account", { profileUser: user, success: "บันทึกข้อมูลเรียบร้อย", error: null });
+            });
+        });
+    });
+});
+
+app.post("/admin/delete/:accountId", requireAdmin, (req, res) => {
+    let accountId = req.params.accountId;
+    let sql1 = `DELETE FROM Progression
+                WHERE account_id = ?`;
+    db.run(sql1, [accountId], (err1) => {
+        if (err1) throw err1;
+        let sql2 = `DELETE FROM Library
+                    WHERE account_id = ?`;
+        db.run(sql2, [accountId], (err2) => {
+            if (err2) throw err2;
+            let sql3 = `DELETE FROM Gamificate
+                        WHERE account_id = ?`;
+            db.run(sql3, [accountId], (err3) => {
+                if (err3) throw err3;
+                let sql4 = `DELETE FROM Account
+                            WHERE account_id = ?`;
+                db.run(sql4, [accountId], (err4) => {
+                    if (err4) throw err4;
+                    res.redirect(`/admin?success=deleted`);
+                });
+            });
         });
     });
 });
