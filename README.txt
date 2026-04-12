@@ -18,4 +18,4 @@
    2) actor: admin
       ชื่อผู้ใช้: support
       อีเมล: support@mail.com
-      รหัสผ่าน: sanfran
+      รหัสผ่าน: hello

@@ -96,11 +96,11 @@ Use [run.bat file](run.bat) in folder, it will do every step by step. Click it a
 
 This is mock-up email address
 
-| Role       | Username  | Email              | Password  |
-|:-----------|:----------|:-------------------|:----------|
-| student    | `sarin`   | `sarin@mail.com`   | `cisco`   |
-| instructor | `arjarn`  | `arjarn@mail.com`  | `class`   |
-| admin      | `support` | `support@mail.com` | `sanfran` |
+| Role       | Username  | Email              | Password |
+|:-----------|:----------|:-------------------|:---------|
+| student    | `sarin`   | `sarin@mail.com`   | `cisco`  |
+| instructor | `arjarn`  | `arjarn@mail.com`  | `class`  |
+| admin      | `support` | `support@mail.com` | `hello`  |
 
 **student** add and remove course, learning and quiz each content
 **instructor** create, edit and delete course/content
