@@ -11,7 +11,17 @@
             <img src="/img/codingo_logo.png" class="h-24 mx-auto">
             <p class="text-gray-600 text-lg max-w-2xl mb-6 mx-auto">ระบบจัดการเรียนรู้ทักษะการเขียนโปรแกรมคอมพิวเตอร์สำหรับการศึกษาและพัฒนาตนเอง</p>
             <div class="flex gap-4 justify-center">
-                <a href="/<%- user ? 'library': 'signin' %>" class="bg-gray-800 text-white px-4 py-3 rounded-xl text-sm"><%- user ? "คลังของฉัน": "เริ่มเรียนเลย" %></a>
+                <% if (user) { %>
+                <% if (user.role == "student") { %>
+                <a href="/library" class="bg-gray-800 text-white px-4 py-3 rounded-xl text-sm">คลังของฉัน</a>
+                <% } else if (user.role == "instructor") { %>
+                <a href="/instructor" class="bg-gray-800 text-white px-4 py-3 rounded-xl text-sm">จัดการบทเรียน</a>
+                <% } else if (user.role == "admin") { %>
+                <a href="/admin" class="bg-gray-800 text-white px-4 py-3 rounded-xl text-sm">จัดการบัญชี</a>
+                <% } %>
+                <% } else { %>
+                <a href="/signin" class="bg-gray-800 text-white px-4 py-3 rounded-xl text-sm">เริ่มเรียนเลย</a>
+                <% } %>
                 <a href="/course" class="border px-4 py-3 rounded-xl text-sm">ค้นหาบทเรียน</a>
             </div>
         </div>
