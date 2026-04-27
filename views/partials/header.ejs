@@ -13,7 +13,13 @@
             <% } else if (user.role == "admin") { %>
             <a href="/admin" class="text-gray-800 text-sm">จัดการบัญชี</a>
             <% } %>
-            <a href="/profile" class="flex items-center justify-center w-10 h-10 rounded-full bg-gray-800 text-white text-xs"><%= user.username[0].toUpperCase() %></a>
+            <input type="checkbox" id="profile" class="hidden peer">
+            <label for="profile" class="flex items-center justify-center w-10 h-10 rounded-full bg-gray-800 text-white text-xs"><%= user.username[0].toUpperCase() %></label>
+            <div class="absolute right-4 top-20 w-48 bg-white border rounded-xl shadow-md p-2 hidden peer-checked:block">
+                <a href="/profile" class="block px-4 py-2 text-gray-800 text-sm">โปรไฟล์</a>
+                <hr class="my-2">
+                <a href="/signout" class="block px-4 py-2 text-red-600 text-sm" onclick="return confirm('ลงชื่อออกใช่หรือไม่')">ลงชื่อออก</a>
+            </div>
             <% } else { %>
             <a href="/signin" class="px-4 py-3 bg-gray-800 text-white text-xs rounded-xl">ลงชื่อเข้าใช้</a>
             <% } %>
@@ -40,6 +46,8 @@
                 <% } %>
                 <hr class="my-2">
                 <a href="/profile" class="block px-4 py-2 text-gray-800 text-sm">โปรไฟล์</a>
+                <hr class="my-2">
+                <a href="/signout" class="block px-4 py-2 text-red-600 text-sm" onclick="return confirm('ลงชื่อออกใช่หรือไม่')">ลงชื่อออก</a>
             </div>
             <% } else { %>
             <a href="/course" class="text-gray-800 text-sm">บทเรียน</a>
