@@ -90,7 +90,7 @@ app.post("/signin", (req, res) => {
                 req.session.user = user;
                 return res.redirect("/home");
             }
-            newStreak = lastActive == yesterday ? newStreak + 1 : 0;
+            newStreak = lastActive == yesterday ? newStreak + 1 : 1;
             let sql3 = `UPDATE Gamificate
                         SET last_active = ?,
                         streak = ?
@@ -128,7 +128,7 @@ app.post("/register", (req, res) => {
             }
             let newAccountId = this.lastID;
             let sql3 = `INSERT INTO Gamificate (account_id, xp, last_active, level, streak) VALUES
-                        (?, 0, DATE(DATETIME('now', '+7 hours')), 0, 0)`;
+                        (?, 0, DATE(DATETIME('now', '+7 hours')), 0, 1)`;
             db.run(sql3, [newAccountId], (err) => {
                 if (err) {
                     return res.render("register", { error: "เกิดข้อผิดพลาด" });
@@ -704,6 +704,14 @@ app.post("/admin/delete/:accountId", requireAdmin, (req, res) => {
             });
         });
     });
+});
+
+app.get("/notfound", (req, res) => {
+    res.render("notfound");
+});
+
+app.use((req, res, next) => {
+    res.redirect("/notfound");
 });
 
 app.listen(port, () => {
