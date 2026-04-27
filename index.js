@@ -29,27 +29,21 @@ app.set("views", path.join(__dirname, "views"));
 
 function requireSignin(req, res, next) {
     if (!req.session.user) {
-        return res.redirect("/signin");
+        return res.redirect("/notfound");
     }
     next();
 }
 
 function requireInstructor(req, res, next) {
-    if (!req.session.user) {
-        return res.redirect("/signin");
-    }
-    if (req.session.user.role != "instructor") {
-        return res.redirect("/home");
+    if (!req.session.user || req.session.user.role != "instructor") {
+        return res.redirect("/notfound");
     }
     next();
 }
 
 function requireAdmin(req, res, next) {
-    if (!req.session.user) {
-        return res.redirect("/signin");
-    }
-    if (req.session.user.role != "admin") {
-        return res.redirect("/home");
+    if (!req.session.user || req.session.user.role != "admin") {
+        return res.redirect("/notfound");
     }
     next();
 }
