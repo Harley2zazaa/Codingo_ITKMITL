@@ -12,7 +12,7 @@ A computer programming skills learning management system for education and self-
 
 **Make sure you have Node.js installed on your device**
 
-Open your ```Terminal``` and run
+Open your `Terminal` and run
 
 ```sh
 node -v
@@ -30,7 +30,7 @@ If it not found, visit [this link](https://nodejs.org/en/download) select your O
 
 **Make sure you have this package installed on your device**
 
-Open your ```Terminal``` and run
+Open your `Terminal` and run
 
 ```sh
 npm install -g nodemon
@@ -39,10 +39,10 @@ npm install -g nodemon
 ## Download
 
 ### First method
-Go to ```<> Code``` Drop-down and click ```Download ZIP```
+Go to `<> Code` Drop-down and click `Download ZIP`
 
 ### Second method
-Clone repository using web URL
+Clone repository using URL
 
 ```sh
 git clone https://github.com/Harley2zazaa/Codingo_ITKMITL.git
@@ -52,7 +52,7 @@ git clone https://github.com/Harley2zazaa/Codingo_ITKMITL.git
 
 ### First method
 
-Open your ```Terminal``` and go this project folder where this project file downloaded on your device
+Open your `Terminal` and go this project folder where this project file downloaded on your device
 
 **Start local server**
 
@@ -68,7 +68,9 @@ http://localhost:3000
 
 ### Second method
 
-Use [run.bat file](run.bat) in folder, it will do every step by step. Click it and enjoy
+Use **[run.bat](run.bat)** file for **Windows** or Use **[run.sh](run.sh)** file for **Linux**
+
+*"It will do every step by step. Click it and enjoy"*
 
 ## For development
 
@@ -94,19 +96,13 @@ npm install nodemon express ejs sqlite3 express-session
 
 ### Sign-in
 
-This is mock-up email address
+This is mock-up data
 
-| Role       | Username  | Email              | Password |
-|:-----------|:----------|:-------------------|:---------|
-| student    | `sarin`   | `sarin@mail.com`   | `cisco`  |
-| instructor | `arjarn`  | `arjarn@mail.com`  | `class`  |
-| admin      | `support` | `support@mail.com` | `hello`  |
-
-**student** add and remove course, learning and quiz each content
-
-**instructor** create, edit and delete course/content
-
-**admin** edit and delete account
+| Role           | Duty                                                  | Username  | Email              | Password |
+|:---------------|:------------------------------------------------------|:----------|:-------------------|:---------|
+| **student**    | add and remove course, learning and quiz each content | `sarin`   | `sarin@mail.com`   | `cisco`  |
+| **instructor** | create, edit and delete course/content                | `arjarn`  | `arjarn@mail.com`  | `class`  |
+| **admin**      | edit and delete account                               | `support` | `support@mail.com` | `hello`  |
 
 ### Register
 
@@ -114,8 +110,8 @@ Create your own account and remember it
 
 ## Contributors
 
-- [GEOFFCHARGE](https://github.com/GEOFFCHARGE) Back-end Developer
-- [Sarin-Z](https://github.com/Sarin-Z) Front-end Developer
-- [AnawinA](https://github.com/AnawinA) Graphic Designer
-- [Power05ya](https://github.com/Power05ya) Web Designer
-- [Harley2zazaa](https://github.com/Harley2zazaa) Project Manager
+- **[GEOFFCHARGE](https://github.com/GEOFFCHARGE)** - Back-end Developer
+- **[Sarin-Z](https://github.com/Sarin-Z)** - Front-end Developer
+- **[AnawinA](https://github.com/AnawinA)** - Graphic Designer
+- **[Power05ya](https://github.com/Power05ya)** - Web Designer
+- **[Harley2zazaa](https://github.com/Harley2zazaa)** - Project Manager
