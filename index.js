@@ -29,21 +29,21 @@ app.set("views", path.join(__dirname, "views"));
 
 function requireSignin(req, res, next) {
     if (!req.session.user) {
-        return res.redirect("/notfound");
+        return res.render("notfound");
     }
     next();
 }
 
 function requireInstructor(req, res, next) {
     if (!req.session.user || req.session.user.role != "instructor") {
-        return res.redirect("/notfound");
+        return res.render("notfound");
     }
     next();
 }
 
 function requireAdmin(req, res, next) {
     if (!req.session.user || req.session.user.role != "admin") {
-        return res.redirect("/notfound");
+        return res.render("notfound");
     }
     next();
 }
@@ -700,12 +700,8 @@ app.post("/admin/delete/:accountId", requireAdmin, (req, res) => {
     });
 });
 
-app.get("/notfound", (req, res) => {
-    res.render("notfound");
-});
-
 app.use((req, res, next) => {
-    res.redirect("/notfound");
+    res.render("notfound");
 });
 
 app.listen(port, () => {
