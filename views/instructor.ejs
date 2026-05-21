@@ -14,7 +14,7 @@
             </div>
             <a href="/instructor/create" class="bg-green-600 text-white px-5 py-3 rounded-xl text-sm">สร้างบทเรียน</a>
         </div>
-        <div class="bg-white border rounded-xl overflow-hidden shadow-md">
+        <div class="bg-white border rounded-xl overflow-auto shadow-md">
             <table class="w-full text-sm">
                 <tr class="text-xs text-gray-600 uppercase tracking-wide">
                     <th class="px-5 py-3 text-left">ชื่อบทเรียน</th>
@@ -29,7 +29,7 @@
                     <td class="px-5 py-3 text-center text-gray-800"><%= item.content_count %></td>
                     <td class="px-5 py-3 text-right">
                         <div class="flex justify-end gap-2">
-                            <a href="/instructor/edit/<%= item.course_id %>" class="text-xs px-3 py-2 bg-blue-600 rounded-xl text-white">แก้ไขบทเรียน</a>
+                            <a href="/instructor/edit/<%= item.course_id %>" class="text-xs px-3 py-2 bg-blue-600 rounded-xl text-white">แก้ไข</a>
                             <form action="/instructor/delete/<%= item.course_id %>" method="POST" class="inline" onsubmit="return confirm('ต้องการลบบทเรียน <%= item.title %> ใช่หรือไม่?')">
                                 <button type="submit" class="text-xs px-3 py-2 bg-red-600 border border-red-600 rounded-xl text-white">ลบ</button>
                             </form>

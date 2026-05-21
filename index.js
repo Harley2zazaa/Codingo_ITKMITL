@@ -29,27 +29,21 @@ app.set("views", path.join(__dirname, "views"));
 
 function requireSignin(req, res, next) {
     if (!req.session.user) {
-        return res.redirect("/signin");
+        return res.render("notfound");
     }
     next();
 }
 
 function requireInstructor(req, res, next) {
-    if (!req.session.user) {
-        return res.redirect("/signin");
-    }
-    if (req.session.user.role != "instructor") {
-        return res.redirect("/home");
+    if (!req.session.user || req.session.user.role != "instructor") {
+        return res.render("notfound");
     }
     next();
 }
 
 function requireAdmin(req, res, next) {
-    if (!req.session.user) {
-        return res.redirect("/signin");
-    }
-    if (req.session.user.role != "admin") {
-        return res.redirect("/home");
+    if (!req.session.user || req.session.user.role != "admin") {
+        return res.render("notfound");
     }
     next();
 }
@@ -90,7 +84,7 @@ app.post("/signin", (req, res) => {
                 req.session.user = user;
                 return res.redirect("/home");
             }
-            newStreak = lastActive == yesterday ? newStreak + 1 : 0;
+            newStreak = lastActive == yesterday ? newStreak + 1 : 1;
             let sql3 = `UPDATE Gamificate
                         SET last_active = ?,
                         streak = ?
@@ -128,7 +122,7 @@ app.post("/register", (req, res) => {
             }
             let newAccountId = this.lastID;
             let sql3 = `INSERT INTO Gamificate (account_id, xp, last_active, level, streak) VALUES
-                        (?, 0, DATE(DATETIME('now', '+7 hours')), 0, 0)`;
+                        (?, 0, DATE(DATETIME('now', '+7 hours')), 0, 1)`;
             db.run(sql3, [newAccountId], (err) => {
                 if (err) {
                     return res.render("register", { error: "เกิดข้อผิดพลาด" });
@@ -704,6 +698,10 @@ app.post("/admin/delete/:accountId", requireAdmin, (req, res) => {
             });
         });
     });
+});
+
+app.use((req, res, next) => {
+    res.render("notfound");
 });
 
 app.listen(port, () => {
