@@ -68,7 +68,7 @@ http://localhost:3000
 
 ### Second method
 
-Use **[run.bat](run.bat)** file for **Windows** or Use **[run.sh](run.sh)** file for **Linux**
+Use **[run.bat](run.bat)** file for **Windows**
 
 *"It will do every step by step. Click it and enjoy"*
 
@@ -107,11 +107,3 @@ This is mock-up data
 ### Register
 
 Create your own account and remember it
-
-## Contributors
-
-- **[GEOFFCHARGE](https://github.com/GEOFFCHARGE)** - Back-end Developer
-- **[Sarin-Z](https://github.com/Sarin-Z)** - Front-end Developer
-- **[AnawinA](https://github.com/AnawinA)** - Graphic Designer
-- **[Power05ya](https://github.com/Power05ya)** - Web Designer
-- **[Harley2zazaa](https://github.com/Harley2zazaa)** - Project Manager
